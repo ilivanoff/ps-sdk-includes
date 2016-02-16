@@ -1,0 +1,13 @@
+/processes/makeschema/*.log
+/processes/makeschema/temp
+/processes/mosaic/*.log
+/processes/mosaic/output
+/processes/lock/*.log
+/processes/prankota/dest
+/processes/prankota/*.log
+/processes/prankota/*.list
+/processes/cron/*.log
+/processes/toolspng/process.log
+/processes/toolspng/output
+/processes/toolspng/source
+/processes/rebus/process.log
