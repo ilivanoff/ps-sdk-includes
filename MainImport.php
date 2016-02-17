@@ -14,7 +14,7 @@ define('DIR_SEPARATOR', '/');
 define('PATH_BASE_DIR', str_replace('\\', DIR_SEPARATOR, dirname(__DIR__)) . DIR_SEPARATOR);
 
 /*
- * Название папки с содержимым (временные файлы, загрузки и т.д.)
+ * Название папки с проектными файлами (классы, ajax-действия, ресурсы и т.д.)
  */
 define('PS_DIR_ADDON', 'ps-addon');
 
