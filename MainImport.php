@@ -29,7 +29,7 @@ define('PS_DIR_INCLUDES', 'ps-includes');
 define('PS_DIR_CONTENT', 'ps-content');
 
 /*
- * Проверим, что данный файл лежит в папке с включениями
+ * Проверим, что данный файл лежит в папке с включениями 
  */
 if (PS_DIR_INCLUDES != basename(__DIR__)) {
     die('Invalid ps-sdk includes dir: ' . basename(__DIR__));
