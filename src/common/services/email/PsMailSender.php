@@ -19,6 +19,9 @@ final class PsMailSender extends PHPMailer {
     public function __construct() {
         check_condition(!self::$inst, 'Экземпляр ' . __CLASS__ . ' должен быть единственным');
 
+        //Выбрасываем исключения
+        parent::__construct(true);
+
         $this->exceptions = true;
         $this->CharSet = 'UTF-8';
         $this->SetLanguage('ru');
