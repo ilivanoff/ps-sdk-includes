@@ -30,7 +30,7 @@ final class PsMailSender extends PHPMailer {
         $this->Username = ConfigIni::smtpUser();
         $this->Password = ConfigIni::smtpPwd();
         //Enable encryption, 'ssl' also accepted
-        //$mail->SMTPSecure = 'tls';
+        $this->SMTPSecure = 'tls';
         $this->IsHTML(true);
         //$mail->WordWrap = 50;
 
