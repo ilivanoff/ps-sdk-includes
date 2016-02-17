@@ -37,7 +37,7 @@ if (PS_DIR_INCLUDES != basename(__DIR__)) {
 
 /*
  * Стартуем сессию 
- * TODO - надо ли?
+ * TODO - нужно ли?
  */
 if (!isset($_SESSION)) {
     session_start();
