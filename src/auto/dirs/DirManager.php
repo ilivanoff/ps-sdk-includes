@@ -221,6 +221,21 @@ class DirManager {
     }
 
     /**
+     * Метод возвращает признак - относится ли данный менеджер к корневой директории проекта
+     */
+    public final function isDocumentRoot() {
+        return DIR_SEPARATOR == $this->relPath;
+    }
+
+    /**
+     * Метод возвращает название директории, к которой относится данный менеджер.
+     * Если он относится к корневой директории, то null
+     */
+    public final function getDirName() {
+        return $this->isDocumentRoot() ? null : basename($this->relPath);
+    }
+
+    /**
      * Очистка директории
      * 
      * @param type $dirs - путь к директории для учистки
@@ -251,7 +266,6 @@ class DirManager {
     /**
      * Тип получения содержимого директории
      */
-
     const DC_MAP = 1; // Карта: название элемента->DirItem
     const DC_NAMES = 2; // Только названия файлов
     const DC_NAMES_NO_EXT = 3; // Только названия файлов без расширения

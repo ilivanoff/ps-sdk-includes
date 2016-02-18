@@ -176,6 +176,16 @@ final class PsCheck {
     }
 
     /**
+     * Метод проверяет, является ли переменная null-ом
+     */
+    public static function _null($value) {
+        if (is_null($value)) {
+            return null; //---
+        }
+        self::raise('Ожидается null', $value);
+    }
+
+    /**
      * Метод проверяет тип переденной переменной
      * 
      * @param mixed $var
