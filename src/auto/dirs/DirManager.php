@@ -264,8 +264,17 @@ class DirManager {
     }
 
     /**
+     * Удаление директории
+     * @return DirManager 
+     */
+    public final function removeDir() {
+        return $this->clearDir(null, true);
+    }
+
+    /**
      * Тип получения содержимого директории
      */
+
     const DC_MAP = 1; // Карта: название элемента->DirItem
     const DC_NAMES = 2; // Только названия файлов
     const DC_NAMES_NO_EXT = 3; // Только названия файлов без расширения
