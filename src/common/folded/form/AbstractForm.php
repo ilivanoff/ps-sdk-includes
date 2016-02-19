@@ -282,7 +282,7 @@ abstract class AbstractForm extends FoldedClass {
         //SMARTY PARAMS
         $SMARTY['form_id'] = $this->ident;
         $SMARTY['hiddens'] = $HIDDENS;
-        $SMARTY['ajax_url'] = PS_DIR_INCLUDES . '/ajax/FormProcess.php';
+        $SMARTY['ajax_url'] = DIR_SEPARATOR . PS_DIR_INCLUDES . '/ajax/FormProcess.php';
         $SMARTY['html_hiddens'] = PsHtml::hiddens($HIDDENS); //HTML - hidden поля
         $SMARTY['html_buttons'] = ($this->isAddCapture() ? PsHtmlForm::capture() : '') . PsHtmlForm::submit($this->buttonsAllowed, $this->CAN_RESET); //HTML - submit buttons
         $SMARTY = array_merge($SMARTY, $this->smartyParams);
