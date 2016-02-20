@@ -423,7 +423,7 @@ function isTotallyEmpty($var) {
 }
 
 function is_inumeric($var) {
-    return is_numeric($var) && is_integer(1 * $var);
+    return is_numeric($var) && is_integer(1 * "$var");
 }
 
 //Преобразование переменной к массиву
