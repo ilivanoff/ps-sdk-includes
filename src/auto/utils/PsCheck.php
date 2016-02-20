@@ -79,6 +79,16 @@ final class PsCheck {
     }
 
     /**
+     * Проверка целочисленного значения
+     */
+    public static function notNegativeInt($var) {
+        if (self::int($var) >= 0) {
+            return (int) $var;
+        }
+        self::raise('Ожидается не отрицательное целочисленное значение', $var);
+    }
+
+    /**
      * Проверка строки на пустоту
      */
     public static function isNotEmptyString($var) {
