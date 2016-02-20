@@ -10,9 +10,13 @@ class IndexedArrayQueryFetcher extends ArrayQueryFetcher {
     /** Колонка индексирования */
     private $idxCol;
 
-    protected function __construct($idxCol) {
+    /** ПРизнак множественности */
+    private $multi;
+
+    protected function __construct($idxCol, $multi) {
         parent::__construct(true, false);
         $this->idxCol = $idxCol;
+        $this->multi = $multi;
     }
 
     public function fetchResult(array $ROWS) {
@@ -20,15 +24,19 @@ class IndexedArrayQueryFetcher extends ArrayQueryFetcher {
         foreach ($ROWS as $row) {
             $idx = $row[$this->idxCol];
             if ($this->filterKey($idx)) {
-                $result[$idx] = $row;
+                if ($this->multi) {
+                    $result[$idx][] = $row;
+                } else {
+                    $result[$idx] = $row;
+                }
             }
         }
         return $result;
     }
 
     /** @return IndexedArrayQueryFetcher */
-    public static function inst($idxCol) {
-        return new IndexedArrayQueryFetcher($idxCol);
+    public static function inst($idxCol, $multi = false) {
+        return new IndexedArrayQueryFetcher($idxCol, $multi);
     }
 
 }

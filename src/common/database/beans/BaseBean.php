@@ -61,7 +61,11 @@ abstract class BaseBean extends AbstractSingleton {
     }
 
     protected function getArrayIndexed($query, $inputarr, $idxCol) {
-        return $this->getArray($query, $inputarr, IndexedArrayQueryFetcher::inst($idxCol));
+        return $this->getArray($query, $inputarr, IndexedArrayQueryFetcher::inst($idxCol, false));
+    }
+
+    protected function getArrayIndexedMulti($query, $inputarr, $idxCol) {
+        return $this->getArray($query, $inputarr, IndexedArrayQueryFetcher::inst($idxCol, true));
     }
 
     protected function getIds($query, $inputarr = false) {
