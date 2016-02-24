@@ -6,7 +6,7 @@ class ContentHelper {
      * Метод безопасно получает контент.
      * В случае возникновения ошибки возвращает её стек.
      */
-    public static function getContent($objOrTpl, $method = 'buildContent') {
+    public static function getContent($objOrTpl, $method = 'buildContent', $callArguments = array()) {
         $isCallable = is_callable($objOrTpl);
         $isTpl = $objOrTpl instanceof Smarty_Internal_Template;
         if (!$isCallable && !$isTpl) {
@@ -21,7 +21,7 @@ class ContentHelper {
         ob_implicit_flush(false);
         try {
             if ($isCallable) {
-                $returned = call_user_func($objOrTpl);
+                $returned = call_user_func_array($objOrTpl, $callArguments);
             } else if ($isTpl) {
                 $returned = $objOrTpl->fetch();
             } else {
