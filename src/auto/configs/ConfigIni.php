@@ -25,6 +25,7 @@ final class ConfigIni extends AbstractIni {
     const GROUP_EXCEPTIONS = 'exceptions';
     const GROUP_AJAX_ACTIONS = 'ajax-actions';
     const GROUP_PROJECT_INCLUDES = 'project-includes';
+    const GROUP_JS_BRIGE = 'php-js-brige';
     const GROUP_USER_INTERACTION = 'user-interaction';
 
     /*
@@ -204,6 +205,14 @@ final class ConfigIni extends AbstractIni {
 
     public static function projectSrcCommonDir() {
         return PsCheck::notEmptyString(self::getPropCheckType(self::GROUP_PROJECT_INCLUDES, 'src-common', array(PsConst::PHP_TYPE_STRING)));
+    }
+
+    /*
+     * JAVASCRIPT BRIGE
+     */
+
+    public static function jsBrigeClasses() {
+        return PsCheck::arr(self::getGroup(self::GROUP_JS_BRIGE));
     }
 
     /*

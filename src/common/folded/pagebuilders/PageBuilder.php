@@ -88,6 +88,17 @@ final class PageBuilder extends PageBuilderResources {
         $defs = json_encode(array_merge($JS_CONSTS, $JS_COMMON, $JS_PAGE));
         $const = json_encode($JS_CLASS_CONSTS);
         $defs = "var defs=$defs; var CONST=$const;";
+
+        foreach (ConfigIni::jsBrigeClasses() as $obj => $groups) {
+            if (is_array($groups)) {
+                foreach ($groups as $member => $class) {
+                    $defs.=' ' . $obj . '.' . $member . '=' . json_encode(PsUtil::getClassConsts($class)) . ';';
+                }
+            } else {
+                $defs.=' var ' . $obj . '=' . json_encode(PsUtil::getClassConsts($groups)) . ';';
+            }
+        }
+
         $defs = PsHtml::linkJs(null, $defs);
 
         $this->LOGGER->infoBox('JS DEFS', $defs);
