@@ -7,10 +7,10 @@
  * @author azazello
  */
 final class PsConstJs {
-
     /**
      * Группа параметров javascript - панели для фолдингов
      */
+
     const PAGE_JS_GROUP_PANELS = 'panels';
 
     /**
@@ -57,7 +57,7 @@ final class PsConstJs {
     const CAPTCHA_FIELD = FORM_PARAM_PSCAPTURE;
     const CAPTCHA_LENGTH = 6;
     const CAPTCHA_IMG_ID = 'captchaimage';
-    const CAPTCHA_SCRIPT = '/pscaptcha/image.php';
+    const CAPTCHA_SCRIPT = '/ps-content/captcha/image.php';
 
     /**
      * Css классы - нумераторы.
