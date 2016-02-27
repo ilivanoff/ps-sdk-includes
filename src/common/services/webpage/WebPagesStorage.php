@@ -72,7 +72,7 @@ class WebPagesStorage {
         $name = PsCheck::notEmptyString($name);
         $code = PsCheck::int($code);
 
-        if (array_key_exists($code, $this->PAGES)) {
+        if (array_key_exists($code, $this->PAGES) && $code != BASE_PAGE_INDEX) {
             PsUtil::raise('\'{}\' is already registered. Cannot register WebPage with same code \'{}\'.', $this->PAGES[$code], $code);
         } else {
             $this->PAGES[$code] = new WebPage($path, $name, $code, $authType, $pageCodeNoAccess, $builderIdent);

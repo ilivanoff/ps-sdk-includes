@@ -29,6 +29,13 @@ abstract class AbstractPageBuilder extends FoldedClass {
     /** @return BaseProfiler */
     public abstract function getProfiler();
 
+    /**
+     * Шаблон с ресурсами для страницы
+     */
+    public function getPageResourcesTpl() {
+        return 'page/page_resources.tpl';
+    }
+
     /*
      * ============
      *  НЕ ТРОГАТЬ

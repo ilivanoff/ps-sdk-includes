@@ -112,7 +112,7 @@ final class PageBuilder extends PageBuilderResources {
      * ======================================
      */
 
-    private function buildResources(PageParams $params, PageContext $ctxt) {
+    private function buildResources(AbstractPageBuilder $builder, PageParams $params, PageContext $ctxt) {
         $SMARTY_PARAMS['CTXT'] = $ctxt;
         $SMARTY_PARAMS['COMMON_CSS_MEDIA'] = 'print';
         $SMARTY_PARAMS['JS_DEFS'] = $this->addAsIsValue($this->buildJsDefs($params));
@@ -125,7 +125,7 @@ final class PageBuilder extends PageBuilderResources {
 
         $SMARTY_PARAMS = array_merge($SMARTY_PARAMS, $SMARTY_PARAMS_PAGE);
 
-        $resources = PSSmarty::template('page/page_resources.tpl', $SMARTY_PARAMS)->fetch();
+        $resources = PSSmarty::template($builder->getPageResourcesTpl(), $SMARTY_PARAMS)->fetch();
         $resources = trim($resources);
 
         $this->LOGGER->infoBox('PAGE_RESOURCES', $resources);
@@ -193,7 +193,7 @@ final class PageBuilder extends PageBuilderResources {
             $CONTENT = $PARAMS->getContent();
 
             // Подключаем все необходимые ресурсы
-            $RESOURCES = $this->buildResources($PARAMS, $CTXT);
+            $RESOURCES = $this->buildResources($BUILDER, $PARAMS, $CTXT);
 
             //Проведём финализацию страницы, чтобы различные менеджеры могли добавить к ней свои данные
             $CONTENT = PageFinaliserFoldings::finalize($this->LOGGER, $CONTENT);
