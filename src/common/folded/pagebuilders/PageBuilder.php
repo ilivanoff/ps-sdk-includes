@@ -212,7 +212,9 @@ final class PageBuilder extends PageBuilderResources {
         $this->LOGGER->infoBox('HTML PAGE', $PAGE_CONTENT);
 
         //ФИНАЛИЗАЦИЯ СТРАНИЦЫ - ВЫЧИСЛИМ РЕСУРСЫ, КОТОРЫЕ НУЖНО ОТКЛЮЧИТЬ
-        $PAGE_CONTENT = PageFinaliserRegExp::finalize($this->LOGGER, $PAGE_CONTENT);
+        /*
+          $PAGE_CONTENT = PageFinaliserRegExp::finalize($this->LOGGER, $PAGE_CONTENT);
+         */
 
         //НОРМАЛИЗАЦИЯ СТРАНИЦЫ - УДАЛИМ ДВОЙНЫЕ ПРОБЕЛЫ И ПЕРЕНОСЫ
         if (PsDefines::isNormalizePage()) {

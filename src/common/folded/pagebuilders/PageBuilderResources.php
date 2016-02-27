@@ -8,7 +8,7 @@
 class PageBuilderResources extends FoldedResources {
 
     /** Допустимые типы ресурсов */
-    protected $RESOURCE_TYPES_ALLOWED = array(self::RTYPE_PHP, self::RTYPE_TPL, self::RTYPE_CSS);
+    protected $RESOURCE_TYPES_ALLOWED = array(self::RTYPE_PHP, self::RTYPE_TPL, self::RTYPE_CSS, self::RTYPE_JS);
 
     public function getEntityName() {
         return 'Построитель страниц';

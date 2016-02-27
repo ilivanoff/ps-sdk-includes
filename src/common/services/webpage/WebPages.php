@@ -41,6 +41,13 @@ class WebPages {
     }
 
     /**
+     * Метод перезагружает текущую страницу
+     */
+    public static function redirectToIndex() {
+        self::getPage(BASE_PAGE_INDEX)->redirectHere();
+    }
+
+    /**
      * Метод определяет и строит текущую Web страницу.
      * Если у пользователя нет к ней доступа, то он будет перенаправлен.
      */
