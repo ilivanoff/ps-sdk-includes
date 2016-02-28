@@ -20,7 +20,7 @@ class PSCacheGroups {
      * @return PSCacheGroup
      */
     public static final function POPUPS() {
-        return self::inst(__FUNCTION__);
+        return PSCacheGroup::inst(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -29,7 +29,7 @@ class PSCacheGroups {
      * @return PSCacheGroup
      */
     public static final function TIMELINES() {
-        return self::inst(__FUNCTION__);
+        return PSCacheGroup::inst(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -38,20 +38,7 @@ class PSCacheGroups {
      * @return PSCacheGroup
      */
     public static final function MOSAIC() {
-        return self::inst(__FUNCTION__);
-    }
-
-    /**
-     * Выданные экземпляры
-     */
-    private static $insts = array();
-
-    /**
-     * Основной метод, возвращающий экземпляры оболочек над группами кешей
-     * @return PSCacheGroup
-     */
-    protected static final function inst($group) {
-        return array_key_exists($group, self::$insts) ? self::$insts[$group] : self::$insts[$group] = new PSCacheGroup($group);
+        return PSCacheGroup::inst(__CLASS__, __FUNCTION__);
     }
 
 }

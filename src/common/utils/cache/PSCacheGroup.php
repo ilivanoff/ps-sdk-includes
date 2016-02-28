@@ -27,6 +27,20 @@ class PSCacheGroup {
         PSCache::inst()->cleanCache($this->group);
     }
 
+    /**
+     * Выданные экземпляры
+     */
+    private static $insts = array();
+
+    /**
+     * Основной метод, возвращающий экземпляры оболочек над группами кешей
+     * @return PSCacheGroup
+     */
+    public static final function inst($__CLASS__, $__FUNCTION__) {
+        $group = PsCheck::notEmptyString($__CLASS__) . ':' . PsCheck::notEmptyString($__FUNCTION__);
+        return array_key_exists($group, self::$insts) ? self::$insts[$group] : self::$insts[$group] = new PSCacheGroup($group);
+    }
+
 }
 
 ?>
