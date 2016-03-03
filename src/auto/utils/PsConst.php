@@ -6,12 +6,13 @@
  * @author azazello
  */
 final class PsConst {
+
     /**
      * Расширения
      */
-
     const EXT_PHP = 'php';
     const EXT_CSS = 'css';
+    const EXT_ERR = 'err';
     const EXT_SQL = 'sql';
     const EXT_M3U = 'm3u';
     const EXT_JS = 'js';
@@ -44,7 +45,6 @@ final class PsConst {
     /**
      * Типы данных php
      */
-
     const PHP_TYPE_BOOLEAN = 'boolean';
     const PHP_TYPE_INTEGER = 'integer';
     const PHP_TYPE_DOUBLE = 'double';
@@ -73,7 +73,6 @@ final class PsConst {
     /**
      * Макросы
      */
-
     const ID_REPLCASE_MACROS = '#id#';
     const NUM_REPLCASE_MACROS = '#num#';
 

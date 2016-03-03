@@ -65,36 +65,51 @@ final class ExceptionHandler {
     }
 
     /**
-     * Метод сохраняет ошибку выполнения в файл
+     * Метод собирает информацию об ошибке для дампа
      * 
      * @param Exception $exception
+     * @param type $additionalInfo
+     */
+    public static function collectDumpInfo(Exception $exception, $additionalInfo = '') {
+        $INFO[] = 'SERVER: ' . (isset($_SERVER) ? print_r($_SERVER, true) : '');
+        $INFO[] = 'REQUEST: ' . (isset($_REQUEST) ? print_r($_REQUEST, true) : '');
+        $INFO[] = 'SESSION: ' . (isset($_SESSION) ? print_r($_SESSION, true) : '');
+        $INFO[] = 'FILES: ' . (isset($_FILES) ? print_r($_FILES, true) : '');
+
+        $additionalInfo = trim("$additionalInfo");
+
+        if ($additionalInfo) {
+            $INFO[] = "ADDITIONAL:\n$additionalInfo\n";
+        }
+
+        $INFO[] = 'STACK:';
+        $INFO[] = ExceptionHelper::formatStackFile($exception);
+
+        return implode("\n", $INFO);
+    }
+
+    /**
+     * Метод сохраняет ошибку выполнения в файл
+     * 
+     * @param Exception $exception - исключение
+     * @param mixed $additionalInfo - дополнительная информация
+     * @return string - информация с исключением для дампа
      */
     public static function dumpError(Exception $exception, $additionalInfo = '') {
         if (ConfigIni::exceptionsMaxDumpCount() <= 0) {
             return; //---
         }
 
-        $additionalInfo = trim("$additionalInfo");
-
-        //Поставим защиту от двойного дампинга ошибки
-        $SafePropName = 'ps_ex_dumped';
-        if (property_exists($exception, $SafePropName)) {
-            return; //---
-        }
-        $exception->$SafePropName = true;
-
         try {
-            $INFO[] = 'SERVER: ' . (isset($_SERVER) ? print_r($_SERVER, true) : '');
-            $INFO[] = 'REQUEST: ' . (isset($_REQUEST) ? print_r($_REQUEST, true) : '');
-            $INFO[] = 'SESSION: ' . (isset($_SESSION) ? print_r($_SESSION, true) : '');
-            $INFO[] = 'FILES: ' . (isset($_FILES) ? print_r($_FILES, true) : '');
+            $DumpInfo = self::collectDumpInfo($exception, $additionalInfo);
 
-            if ($additionalInfo) {
-                $INFO[] = "ADDITIONAL:\n$additionalInfo\n";
+            //Поставим защиту от двойного дампинга ошибки
+            $SafePropName = 'ps_ex_dumped';
+            if (property_exists($exception, $SafePropName)) {
+                return $DumpInfo; //---
             }
+            $exception->$SafePropName = true;
 
-            $INFO[] = 'STACK:';
-            $INFO[] = ExceptionHelper::formatStackFile($exception);
 
             $original = ExceptionHelper::extractOriginal($exception);
             $fname = get_file_name($original->getFile());
@@ -104,7 +119,9 @@ final class ExceptionHandler {
             if ($DM->getDirContentCnt() >= ConfigIni::exceptionsMaxDumpCount()) {
                 $DM->clearDir();
             }
-            $DM->getDirItem(null, PsUtil::fileUniqueTime() . " [$fname $fline]", 'err')->putToFile(implode("\n", $INFO));
+            $DM->getDirItem(null, PsUtil::fileUniqueTime() . " [$fname $fline]", PsConst::EXT_ERR)->putToFile($DumpInfo);
+
+            return $DumpInfo; //---
         } catch (Exception $ex) {
             //Если в методе дампа эксепшена ошибка - прекращаем выполнение.
             die("Exception [{$exception->getMessage()}] dump error: [{$ex->getMessage()}]");
