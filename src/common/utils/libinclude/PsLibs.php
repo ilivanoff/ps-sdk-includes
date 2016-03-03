@@ -166,7 +166,7 @@ class PsLibs {
      * 1. Использовать стандартизованный метод подключения внешних библиотек
      * 2. Переопределить подключение библиотек из SDK
      */
-    public static final function inst() {
+    public static function inst() {
         if (isset(self::$inst)) {
             return self::$inst; //----
         }
