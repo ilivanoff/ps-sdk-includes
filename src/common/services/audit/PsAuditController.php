@@ -179,8 +179,6 @@ final class PsAuditController {
      * @param int $code - код аудита в файле конфига
      */
     private function __construct($code) {
-        $this->LOGGER = PsLogger::inst(__CLASS__);
-
         $this->code = PsCheck::int($code);
         $this->class = array_get_value($code, ConfigIni::audits());
 
@@ -198,6 +196,8 @@ final class PsAuditController {
         if (empty($this->actions)) {
             return PsUtil::raise('Не зарегистрировано ни одного действия в классе аудита \'{}\'', $this->class);
         }
+
+        $this->LOGGER = PsLogger::inst($this->class);
     }
 
     public final function __toString() {
