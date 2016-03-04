@@ -172,7 +172,7 @@ final class PsAuditController {
         /*
          * Не удалось найти класс аудита
          */
-        return PsUtil::raise('Класс аудита {} не зарегистрирован', $ident);
+        return PsUtil::raise('Класс аудита \'{}\' не зарегистрирован', $ident);
     }
 
     /**
@@ -185,7 +185,7 @@ final class PsAuditController {
         $this->class = array_get_value($code, ConfigIni::audits());
 
         if (!PsCheck::isNotEmptyString($this->class)) {
-            return PsUtil::raise('Класс аудита с кодом {} не зарегистрирован', $this->code);
+            return PsUtil::raise('Класс аудита с кодом \'{}\' не зарегистрирован', $this->code);
         }
 
         if (!class_exists($this->class)) {
@@ -196,7 +196,7 @@ final class PsAuditController {
         PsUtil::assertClassHasDifferentConstValues($this->class, 'ACTION_');
         $this->actions = PsUtil::getClassConsts($this->class, 'ACTION_');
         if (empty($this->actions)) {
-            return PsUtil::raise('Не зарегистрировано ни одного действия в классе аудита {}', $this->class);
+            return PsUtil::raise('Не зарегистрировано ни одного действия в классе аудита \'{}\'', $this->class);
         }
     }
 
