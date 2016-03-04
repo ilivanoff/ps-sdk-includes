@@ -18,14 +18,22 @@ class PsIp {
      * Добавляет IP адрес в список забаненных
      */
     public static function ban($ip) {
-        return IpBanBean::inst()->banIp($ip);
+        $done = IpBanBean::inst()->banIp($ip);
+        if ($done) {
+            IpBanAudit::inst()->onBanned($ip);
+        }
+        return $done;
     }
 
     /**
      * Удаляет IP адрес из списка забаненных
      */
     public static function unban($ip) {
-        return IpBanBean::inst()->unbanIp($ip);
+        $done = IpBanBean::inst()->unbanIp($ip);
+        if ($done) {
+            IpBanAudit::inst()->onUnbanned($ip);
+        }
+        return $done;
     }
 
     /**
@@ -34,7 +42,11 @@ class PsIp {
      * @return int - кол-во разблокированных ip адресов
      */
     public static function unbanAll() {
-        return IpBanBean::inst()->unbanAll();
+        $done = IpBanBean::inst()->unbanAll();
+        if ($done) {
+            IpBanAudit::inst()->onUnbannedAll();
+        }
+        return $done;
     }
 
     /**

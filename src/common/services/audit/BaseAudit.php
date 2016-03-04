@@ -6,10 +6,12 @@
  * @author azazello
  */
 abstract class BaseAudit extends AbstractSingleton {
+
     //Допустимые коды аудита
 
     const CODE_USERS = 1;
     const CODE_EMAILS = 2;
+    const CODE_IPBANS = 3;
 
     /** @var PsLoggerInterface */
     private $LOGGER;
@@ -71,8 +73,7 @@ abstract class BaseAudit extends AbstractSingleton {
         if ($canBeNull && $action === null) {
             return null;
         }
-        check_condition(is_inumeric($action), "Не целочисленный код действия [$action] для $this");
-        $action = 1 * $action;
+        $action = PsCheck::int($action);
         check_condition(in_array($action, $this->ACTIONS), "Код действия [$action] не зарегистрирован для $this");
         return $action;
     }
