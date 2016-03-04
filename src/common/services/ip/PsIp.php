@@ -20,7 +20,7 @@ class PsIp {
     public static function ban($ip) {
         $done = IpBanBean::inst()->banIp($ip);
         if ($done) {
-            IpBanAudit::inst()->onBanned($ip);
+            IpBanAudit::onBanned($ip);
         }
         return $done;
     }
@@ -31,7 +31,7 @@ class PsIp {
     public static function unban($ip) {
         $done = IpBanBean::inst()->unbanIp($ip);
         if ($done) {
-            IpBanAudit::inst()->onUnbanned($ip);
+            IpBanAudit::onUnbanned($ip);
         }
         return $done;
     }
@@ -44,7 +44,7 @@ class PsIp {
     public static function unbanAll() {
         $done = IpBanBean::inst()->unbanAll();
         if ($done) {
-            IpBanAudit::inst()->onUnbannedAll();
+            IpBanAudit::onUnbannedAll();
         }
         return $done;
     }

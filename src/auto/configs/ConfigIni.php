@@ -27,6 +27,7 @@ final class ConfigIni extends AbstractIni {
     const GROUP_PROJECT_INCLUDES = 'project-includes';
     const GROUP_JS_BRIGE = 'php-js-brige';
     const GROUP_USER_INTERACTION = 'user-interaction';
+    const GROUP_AUDIT = 'audit';
 
     /*
      * CORE
@@ -213,6 +214,18 @@ final class ConfigIni extends AbstractIni {
 
     public static function jsBrigeClasses() {
         return PsCheck::arr(self::getGroup(self::GROUP_JS_BRIGE));
+    }
+
+    /*
+     * AUDIT - классы аудита
+     */
+
+    public static function audits() {
+        return self::getPropCheckType(self::GROUP_AUDIT, self::GROUP_AUDIT, array(PsConst::PHP_TYPE_ARRAY));
+    }
+
+    public static function auditsDisabled() {
+        return self::getPropCheckType(self::GROUP_AUDIT, 'disabled', array(PsConst::PHP_TYPE_NULL, PsConst::PHP_TYPE_ARRAY));
     }
 
     /*

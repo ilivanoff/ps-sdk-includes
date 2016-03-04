@@ -81,7 +81,7 @@ abstract class UserUpdateBean extends UserLoadBean {
         if (empty($DIF)) {
             return; //---
         }
-        UserAudit::inst()->onUpdate($userId, $DIF);
+        UserAudit::onUpdate($userId, $DIF);
     }
 
     /**

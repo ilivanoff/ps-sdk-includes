@@ -12,9 +12,8 @@ final class AdminAuditTools {
      */
     public static function getAuditTypeCombo() {
         $data = array();
-        /* @var $audit BaseAudit */
-        foreach (BaseAudit::getAll() as $audit) {
-            $data[] = PsHtml::comboOption($audit->getProcessCode(), $audit->getClass() . '&nbsp;&nbsp;(' . $audit->getDescription() . ')');
+        foreach (ConfigIni::audits()as $processCode => $class) {
+            $data[] = PsHtml::comboOption($processCode, $class . '&nbsp;&nbsp;(' . $processCode . ')');
         }
         return $data;
     }
@@ -24,10 +23,9 @@ final class AdminAuditTools {
      */
     public static function getAuditActionsCombo() {
         $data = array();
-        /* @var $audit BaseAudit */
-        foreach (BaseAudit::getAll() as $audit) {
-            foreach ($audit->getActions() as $name => $code) {
-                $data[] = PsHtml::comboOption($code, $name . "&nbsp;&nbsp;($code)", array('data' => array('process' => $audit->getProcessCode())));
+        foreach (ConfigIni::audits()as $processCode => $class) {
+            foreach (PsAuditController::inst($processCode)->getActions() as $name => $code) {
+                $data[] = PsHtml::comboOption($code, $name . "&nbsp;&nbsp;($code)", array('data' => array('process' => $processCode)));
             }
         }
         return $data;
@@ -37,12 +35,11 @@ final class AdminAuditTools {
      * метод загружает кол-во записей для каждого аудита
      */
     public static function getAuditStatistic($dateTo) {
-        $RESULT = array();
         $statistic = AdminAuditBean::inst()->getProcessStatistic($dateTo);
-        /* @var $audit BaseAudit */
-        foreach (BaseAudit::getAll() as $code => $audit) {
-            foreach ($audit->getActions() as $actionName => $actionCode) {
-                $RESULT[] = array('name' => $audit->getClass(), 'action' => "$actionName ($actionCode)", 'cnt' => array_get_value_in(array($code, $actionCode), $statistic));
+        $RESULT = array();
+        foreach (ConfigIni::audits()as $processCode => $class) {
+            foreach (PsAuditController::inst($processCode)->getActions() as $actionName => $actionCode) {
+                $RESULT[] = array('name' => $class, 'action' => "$actionName ($actionCode)", 'cnt' => array_get_value_in(array($processCode, $actionCode), $statistic));
             }
         }
         return $RESULT;

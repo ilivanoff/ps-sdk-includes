@@ -281,12 +281,12 @@ final class AuthManager {
         //Проверим, а нет ли у пользователя очков, которые он заслужил
         UserPointsManager::inst()->checkAllUserPoints($user);
         //Аудит
-        UserAudit::inst()->afterLogin($user->getId());
+        UserAudit::afterLogin($user->getId());
     }
 
     private static function beforeLogout(PsUser $user) {
         //Аудит
-        UserAudit::inst()->beforeLogout($user->getId());
+        UserAudit::beforeLogout($user->getId());
     }
 
 }

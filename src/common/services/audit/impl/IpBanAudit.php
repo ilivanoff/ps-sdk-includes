@@ -5,11 +5,11 @@
  *
  * @author azaz
  */
-class IpBanAudit extends BaseAudit {
-
+final class IpBanAudit extends PsAuditAbstract {
     /**
      * Действия
      */
+
     const ACTION_BANNED = 1;
     const ACTION_UNBANNED = 2;
     const ACTION_UNBANNED_ALL = 3;
@@ -26,26 +26,21 @@ class IpBanAudit extends BaseAudit {
      * Был забанен IP адрес
      */
     public function onBanned($ip) {
-        $this->doAudit(self::ACTION_BANNED, null, PsCheck::ip($ip));
+        parent::doAudit(self::ACTION_BANNED, PsCheck::ip($ip));
     }
 
     /**
      * Был забанен IP адрес
      */
     public function onUnbanned($ip) {
-        $this->doAudit(self::ACTION_UNBANNED, null, PsCheck::ip($ip));
+        parent::doAudit(self::ACTION_UNBANNED, PsCheck::ip($ip));
     }
 
     /**
      * Был забанен IP адрес
      */
     public function onUnbannedAll() {
-        $this->doAudit(self::ACTION_UNBANNED_ALL);
-    }
-
-    /** @return IpBanAudit */
-    public static function inst() {
-        return parent::inst();
+        parent::doAudit(self::ACTION_UNBANNED_ALL);
     }
 
 }

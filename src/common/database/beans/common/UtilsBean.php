@@ -12,10 +12,10 @@ class UtilsBean extends BaseBean {
      * =====================================
      */
 
-    public function saveAudit($parentId, $userId, $userIdAuthed, $processId, $action, $data, $encoded) {
+    public function saveAudit($userId, $userIdAuthed, $processId, $action, $data, $encoded) {
         return $this->insert(
-                        'INSERT INTO ps_audit (id_rec_parent, id_user, id_user_authed, id_process, dt_event, n_action, v_data, b_encoded) VALUES (?, ?, ?, ?, unix_timestamp(), ?, ?, ?)', //
-                        array($parentId, $userId, $userIdAuthed, $processId, $action, $data, $encoded));
+                        'INSERT INTO ps_audit (id_user, id_user_authed, id_process, dt_event, n_action, v_data, b_encoded) VALUES (?, ?, ?, unix_timestamp(), ?, ?, ?)', //
+                        array($userId, $userIdAuthed, $processId, $action, $data, $encoded));
     }
 
     /*

@@ -39,7 +39,7 @@ class UserBean extends UserUpdateBean {
         $userId = $this->register($this->insert(Query::insert('users', $params)));
 
         //Сохраним данные пользователя в аудит
-        UserAudit::inst()->afterRegistered($userId, array_filter_keys($this->getUserDataById($userId), self::$SKIP_AUDIT_ON_CREATE_FIELDS));
+        UserAudit::afterRegistered($userId, array_filter_keys($this->getUserDataById($userId), self::$SKIP_AUDIT_ON_CREATE_FIELDS));
 
         //Возвращаем код пользователя
         return $userId;

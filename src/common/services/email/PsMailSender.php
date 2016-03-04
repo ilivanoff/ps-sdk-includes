@@ -91,7 +91,7 @@ final class PsMailSender extends PHPMailer {
             //Сделаем дамп отправленного письма
             $this->dumpEmail();
             //Запишем аудит
-            MailAudit::inst()->afterSended($this);
+            MailAudit::afterSended($this);
             //Вернём то, что вернул оригинальный Send метод
             return $result;
         } catch (Exception $ex) {

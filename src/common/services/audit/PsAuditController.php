@@ -1,0 +1,209 @@
+<?php
+
+/**
+ * Класс содержит информацию о классе аудита, настроенном в config.ini
+ *
+ * @author azazello
+ */
+final class PsAuditController {
+
+    /**
+     * @var int - код аудита из конфига
+     */
+    private $code;
+
+    /**
+     * @var string - класс аудита из конфига
+     */
+    private $class;
+
+    /**
+     * @var array - действия
+     */
+    private $actions;
+
+    /**
+     * @var int - счётчик вызово
+     */
+    private $counter = 0;
+
+    /** @var PsLoggerInterface */
+    protected $LOGGER;
+
+    /**
+     * Список всех действий
+     */
+    public function getActions() {
+        return $this->actions;
+    }
+
+    /**
+     * Валидация типа действия
+     */
+    private function checkActionCode($actionCode) {
+        $actionCode = PsCheck::int($actionCode);
+        if (in_array($actionCode, $this->actions)) {
+            return $actionCode;
+        }
+        return PsUtil::raise("Код действия [$actionCode] не зарегистрирован для аудита $this");
+    }
+
+    /**
+     * Метод декодирует действие по коду
+     */
+    public function decodeAction($actionCode) {
+        $actionCode = $this->checkActionCode($actionCode);
+        return PsUtil::getClassConstByValue($this->class, 'ACTION_', $actionCode) . ' (' . $actionCode . ')';
+    }
+
+    /**
+     * Проверка - включён ли этот аудит
+     */
+    private function isEnabled() {
+        return !is_array(ConfigIni::auditsDisabled()) || !in_array($this->code, ConfigIni::auditsDisabled());
+    }
+
+    /**
+     * Метод выполняет аудит
+     * 
+     * @param int $action - код действия, который должен быть определён в классе в виде константы ACTION_
+     * @param mixed $data - данные аудита
+     * @param int $userId - код пользователя для аудита. Авторизованный пользователь будет записан всё равно
+     */
+    public function doAudit($action, $data = null, $userId = null) {
+        try {
+            $action = $this->checkActionCode($action);
+
+            $userId = AuthManager::validateUserIdOrNull($userId);
+            $userIdAuthed = AuthManager::getUserIdOrNull();
+
+            if ($this->LOGGER->isEnabled()) {
+                $this->LOGGER->info();
+                $this->LOGGER->info("<Запись #{}>", ++$this->counter);
+                $this->LOGGER->info('Действие: {}', $this->decodeAction($action));
+                $this->LOGGER->info('Пользователь: {}', is_inumeric($userId) ? $userId : 'НЕТ');
+                $this->LOGGER->info('Авторизованный пользователь: {}', is_inumeric($userIdAuthed) ? $userIdAuthed : 'НЕТ');
+                $this->LOGGER->info('Данные: {}', $data === null ? 'НЕТ' : print_r($data, true));
+            }
+
+            if (!$this->isEnabled()) {
+                return; //---
+            }
+
+            $encoded = 0;
+            if (is_array($data)) {
+                if (count($data) == 0) {
+                    $data = null;
+                } else {
+                    $data = self::encodeData($data);
+                    $encoded = 1;
+                }
+            }
+
+            PsCheck::phpVarType($data, array(PsConst::PHP_TYPE_NULL, PsConst::PHP_TYPE_STRING, PsConst::PHP_TYPE_DOUBLE, PsConst::PHP_TYPE_FLOAT, PsConst::PHP_TYPE_INTEGER));
+
+            $recId = UtilsBean::inst()->saveAudit($userId, $userIdAuthed, $this->code, $action, $data, $encoded);
+
+            if ($this->LOGGER->isEnabled()) {
+                if ($data !== null) {
+                    $this->LOGGER->info('Данные кодированы: {}', $encoded ? "ДА ($data)" : 'НЕТ');
+                }
+                $this->LOGGER->info('Информация сохранена в базу, id={}', $recId);
+            }
+
+            $this->LOGGER->info('АУДИТ ПРОИЗВЕДЁН.');
+        } catch (Exception $ex) {
+            //Не удалось записать аудит, но работа должна быть продолжена!
+            ExceptionHandler::dumpError($ex);
+        }
+    }
+
+    /**
+     * Метод сериализует данные аудита
+     * 
+     * @param array $data - данные аудита
+     * @return string
+     */
+    private static final function encodeData(array $data) {
+        return serialize($data);
+    }
+
+    /**
+     * Метод десериализует данные аудита
+     * 
+     * @param string $data - данные аудита
+     * @return array|null
+     */
+    public static final function decodeData($data) {
+        return $data ? @unserialize($data) : null;
+    }
+
+    /**
+     * Экземпляры аудитов
+     * 
+     * @var array
+     */
+    private static $items = array();
+
+    /**
+     * Метод возвращает класс контроллера для аудита
+     * @return PsAuditController контроллер класса аудита
+     */
+    public static function inst($ident) {
+        /*
+         * Поищем класс аудита по его коду
+         */
+        if (PsCheck::isInt($ident)) {
+            return array_key_exists($ident, self::$items) ? self::$items[$ident] : self::$items[$ident] = new PsAuditController($ident);
+        }
+
+        /*
+         * Поищем класс аудита по названию
+         */
+        if (PsCheck::isNotEmptyString($ident)) {
+            $code = array_search($ident, ConfigIni::audits());
+            if (PsCheck::isInt($code)) {
+                return self::inst($code);
+            } else {
+                return PsUtil::raise('Класс аудита \'{}\' не зарегистрирован', $ident);
+            }
+        }
+
+        /*
+         * Не удалось найти класс аудита
+         */
+        return PsUtil::raise('Класс аудита {} не зарегистрирован', $ident);
+    }
+
+    /**
+     * @param int $code - код аудита в файле конфига
+     */
+    private function __construct($code) {
+        $this->LOGGER = PsLogger::inst(__CLASS__);
+
+        $this->code = PsCheck::int($code);
+        $this->class = array_get_value($code, ConfigIni::audits());
+
+        if (!PsCheck::isNotEmptyString($this->class)) {
+            return PsUtil::raise('Класс аудита с кодом {} не зарегистрирован', $this->code);
+        }
+
+        if (!class_exists($this->class)) {
+            return PsUtil::raise('Класс аудита \'{}\' не найден', $this->class);
+        }
+
+        //Проверим, что коды действий уникальны
+        PsUtil::assertClassHasDifferentConstValues($this->class, 'ACTION_');
+        $this->actions = PsUtil::getClassConsts($this->class, 'ACTION_');
+        if (empty($this->actions)) {
+            return PsUtil::raise('Не зарегистрировано ни одного действия в классе аудита {}', $this->class);
+        }
+    }
+
+    public final function __toString() {
+        return "{$this->class} [{$this->code}]";
+    }
+
+}
+
+?>

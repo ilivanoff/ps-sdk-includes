@@ -5,16 +5,9 @@
  *
  * @author azazello
  */
-final class MailAudit extends BaseAudit {
-    /**
-     * Действия
-     */
+final class MailAudit extends PsAuditAbstract {
 
     const ACTION_SENDED = 1;
-
-    public function getProcessCode() {
-        return self::CODE_EMAILS;
-    }
 
     public function getDescription() {
         return 'Отправка почты';
@@ -23,13 +16,8 @@ final class MailAudit extends BaseAudit {
     /**
      * Аудит отправки письма
      */
-    public function afterSended(PsMailSender $sender) {
-        $this->doAudit(self::ACTION_SENDED, $sender->getUserIdTo(), "$sender");
-    }
-
-    /** @return MailAudit */
-    public static function inst() {
-        return parent::inst();
+    public static function afterSended(PsMailSender $sender) {
+        parent::doAudit(self::ACTION_SENDED, "$sender", $sender->getUserIdTo());
     }
 
 }

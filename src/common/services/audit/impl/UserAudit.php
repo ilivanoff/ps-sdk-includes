@@ -5,7 +5,7 @@
  *
  * @author azazello
  */
-final class UserAudit extends BaseAudit {
+final class UserAudit extends PsAuditAbstract {
     /**
      * Действия
      */
@@ -15,10 +15,6 @@ final class UserAudit extends BaseAudit {
     const ACTION_LOGOUT = 3;
     const ACTION_UPDATE = 4;
 
-    public function getProcessCode() {
-        return self::CODE_USERS;
-    }
-
     public function getDescription() {
         return 'Действия пользователя';
     }
@@ -26,36 +22,31 @@ final class UserAudit extends BaseAudit {
     /**
      * Аудит регистрации пользователя
      */
-    public function afterRegistered($userId, array $params) {
-        $this->doAudit(self::ACTION_REGISTER, $userId, $params, true);
+    public static function afterRegistered($userId, array $params) {
+        parent::doAudit(self::ACTION_REGISTER, $params, $userId);
     }
 
     /**
      * Аудит входа пользователя в систему
      */
-    public function afterLogin($userId) {
+    public static function afterLogin($userId) {
         $data['ip'] = ServerArrayAdapter::REMOTE_ADDR();
         $data['agent'] = ServerArrayAdapter::HTTP_USER_AGENT();
-        $this->doAudit(self::ACTION_LOGIN, $userId, $data, true, self::ACTION_REGISTER);
+        parent::doAudit(self::ACTION_LOGIN, $data, $userId);
     }
 
     /**
      * Аудит изменения параметров пользователя
      */
-    public function onUpdate($userId, array $DIFF) {
-        $this->doAudit(self::ACTION_UPDATE, $userId, $DIFF, false, self::ACTION_LOGIN, true, false);
+    public static function onUpdate($userId, array $DIFF) {
+        parent::doAudit(self::ACTION_UPDATE, $DIFF, $userId);
     }
 
     /**
      * Аудит выхода пользователя из системы
      */
-    public function beforeLogout($userId) {
-        $this->doAudit(self::ACTION_LOGOUT, $userId, null, false, self::ACTION_LOGIN);
-    }
-
-    /** @return UserAudit */
-    public static function inst() {
-        return parent::inst();
+    public static function beforeLogout($userId) {
+        $this->doAudit(self::ACTION_LOGOUT, null, $userId);
     }
 
 }
