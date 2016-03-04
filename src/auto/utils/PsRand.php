@@ -52,6 +52,13 @@ final class PsRand {
         return $result;
     }
 
+    /**
+     * Случайный ip адрес
+     */
+    public static function ip() {
+        return rand(1, 255) . '.' . rand(0, 255) . '.' . rand(0, 255) . '.' . rand(0, 255);
+    }
+
 }
 
 ?>

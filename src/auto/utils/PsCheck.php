@@ -186,6 +186,23 @@ final class PsCheck {
     }
 
     /**
+     * Метод проверяет, является ли строка валидным ip адресом
+     */
+    public static function isIp($ip) {
+        return !!filter_var($ip, FILTER_VALIDATE_IP);
+    }
+
+    /**
+     * Метод проверяет, является ли строка валидным email адресом
+     */
+    public static function ip($ip) {
+        if (self::isIp($ip)) {
+            return $ip;
+        }
+        self::raise('Ожидается валидный ip адрес', $ip);
+    }
+
+    /**
      * Метод проверяет, является ли переменная null-ом
      */
     public static function _null($value) {
