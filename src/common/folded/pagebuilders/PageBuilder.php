@@ -75,6 +75,7 @@ final class PageBuilder extends PageBuilderResources {
         $params['tzOffset'] = PsTimeZone::inst()->getCurrentDateTimeZone()->getOffset(new DateTime());
         $params['marker'] = AuthManager::getUserSessoinMarker();
         $params['foldings'] = FoldedStorage::listEntitiesRel();
+        $params['isIpBanned'] = PsIp::isRemoteAddrBanned();
 
         return $params;
     }

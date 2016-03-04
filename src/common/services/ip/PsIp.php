@@ -46,4 +46,13 @@ class PsIp {
         return IpBanBean::inst()->listBanned();
     }
 
+    /**
+     * Метод проверяет, забанен ли IP адрес в $_SERVER
+     * 
+     * @return bool
+     */
+    public static function isRemoteAddrBanned() {
+        return self::isBanned(ServerArrayAdapter::REMOTE_ADDR());
+    }
+
 }

@@ -28,14 +28,19 @@ abstract class AbstractAjaxAction {
         check_condition(!$this->processed, "Действие [$id] уже выполнено.");
         $this->processed = true;
 
+        //Проверка доступа
+        AuthManager::checkAccess($this->getAuthType());
+
+        //Проверим, не забанен ли IP адрес. Админу разрешим доступ всегда, так как если он один раз добавит свой ip в забаненные, то придётся править только доступом в БД
+        if (!AuthManager::isAuthorizedAsAdmin() && PsIp::isRemoteAddrBanned()) {
+            return 'Действие временно не может быть выполнено, приносим свои извинения';
+        }
+
         //Не будем портить глобальный массив $_REQUEST, создав копию адаптера
         $params = RequestArrayAdapter::inst()->copy();
         check_condition($params->str(AJAX_ACTION_PARAM) == $id, "Действие [$id] не может быть выполнено.");
         $params->remove(AJAX_ACTION_PARAM);
         $params->remove(AJAX_ACTION_GROUP_PARAM);
-
-        //Проверка доступа
-        AuthManager::checkAccess($this->getAuthType());
 
         //Если пользователь зарегистрирован, как администратор - подключим ресурсы админа
         //ps_admin_on();
