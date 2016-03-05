@@ -232,7 +232,7 @@ final class PsAuditController {
     }
 
     public final function __toString() {
-        return "{$this->class} [{$this->code}]";
+        return "[{$this->code}] {$this->class}";
     }
 
 }
