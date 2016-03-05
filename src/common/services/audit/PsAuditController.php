@@ -53,7 +53,7 @@ final class PsAuditController {
      */
     public function decodeAction($actionCode) {
         $actionCode = $this->checkActionCode($actionCode);
-        return array_search($actionCode, $this->actions) . ' (' . $actionCode . ')';
+        return "[$actionCode] " . array_search($actionCode, $this->actions);
     }
 
     /**
@@ -138,7 +138,7 @@ final class PsAuditController {
         } catch (Exception $ex) {
             //Не удалось записать аудит, но работа должна быть продолжена!
             ExceptionHandler::dumpError($ex);
-            throw $ex;
+            //throw $ex;
         }
     }
 
