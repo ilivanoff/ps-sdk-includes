@@ -17,7 +17,7 @@ final class MailAudit extends PsAuditAbstract {
      * Аудит отправки письма
      */
     public static function afterSended(PsMailSender $sender) {
-        parent::doAudit(self::ACTION_SENDED, "$sender", $sender->getUserIdTo());
+        parent::newRec(self::ACTION_SENDED)->setUserId($sender->getUserIdTo())->setData("$sender")->submit();
     }
 
 }

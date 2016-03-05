@@ -23,28 +23,28 @@ final class UserAudit extends PsAuditAbstract {
      * Аудит регистрации пользователя
      */
     public static function afterRegistered($userId, array $params) {
-        parent::doAudit(self::ACTION_REGISTER, $params, $userId);
+        parent::newRec(self::ACTION_REGISTER)->setUserId($userId)->setData($params)->submit();
     }
 
     /**
      * Аудит входа пользователя в систему
      */
     public static function afterLogin($userId) {
-        parent::doAudit(self::ACTION_LOGIN, null, $userId);
+        parent::newRec(self::ACTION_LOGIN)->setUserId($userId)->submit();
     }
 
     /**
      * Аудит изменения параметров пользователя
      */
     public static function onUpdate($userId, array $DIFF) {
-        parent::doAudit(self::ACTION_UPDATE, $DIFF, $userId);
+        parent::newRec(self::ACTION_UPDATE)->setUserId($userId)->setData($DIFF)->submit();
     }
 
     /**
      * Аудит выхода пользователя из системы
      */
     public static function beforeLogout($userId) {
-        $this->doAudit(self::ACTION_LOGOUT, null, $userId);
+        parent::newRec(self::ACTION_LOGOUT)->setUserId($userId)->submit();
     }
 
 }

@@ -1,14 +1,20 @@
 <?php
 
 /**
- * Description of PsAuditAbstract
+ * Базовый класс для классов аудита
  *
  * @author azazello
  */
 abstract class PsAuditAbstract {
 
-    protected static function doAudit($action, $data = null, $userId = null, $instId = null, $typeId = null) {
-        PsAuditController::inst(get_called_class())->doAudit($action, $data, $userId, $instId, $typeId);
+    /**
+     * Метод создаёт новое действие
+     * 
+     * @param int $action - код действия
+     * @return PsAuditRec
+     */
+    protected static function newRec($action) {
+        return PsAuditRec::inst(get_called_class(), $action);
     }
 
 }

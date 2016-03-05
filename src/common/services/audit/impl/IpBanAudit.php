@@ -26,21 +26,21 @@ final class IpBanAudit extends PsAuditAbstract {
      * Был забанен IP адрес
      */
     public function onBanned($ip) {
-        parent::doAudit(self::ACTION_BANNED, PsCheck::ip($ip));
+        parent::newRec(self::ACTION_BANNED)->setData(PsCheck::ip($ip))->submit();
     }
 
     /**
      * Был забанен IP адрес
      */
     public function onUnbanned($ip) {
-        parent::doAudit(self::ACTION_UNBANNED, PsCheck::ip($ip));
+        parent::newRec(self::ACTION_UNBANNED)->setData(PsCheck::ip($ip))->submit();
     }
 
     /**
      * Был забанен IP адрес
      */
     public function onUnbannedAll() {
-        parent::doAudit(self::ACTION_UNBANNED_ALL);
+        parent::newRec(self::ACTION_UNBANNED_ALL)->submit();
     }
 
 }
