@@ -1,23 +1,11 @@
 <?php
 
 /**
- * Description of UtilsBean
+ * Утилитные методы для работы с БД
  *
  * @author Admin
  */
 class UtilsBean extends BaseBean {
-    /*
-     * =====================================
-     * ===== АВТОРИЗАЦИИ ПОЛЬЗОВАТЕЛЯ ======
-     * =====================================
-     */
-
-    public function saveAudit($userId, $userIdAuthed, $processId, $action, $data, $encoded) {
-        return $this->insert(
-                        'INSERT INTO ps_audit (id_user, id_user_authed, id_process, dt_event, n_action, v_data, b_encoded) VALUES (?, ?, ?, unix_timestamp(), ?, ?, ?)', //
-                        array($userId, $userIdAuthed, $processId, $action, $data, $encoded));
-    }
-
     /*
      * =====================================
      * ============= ОПЕЧАТКИ ==============

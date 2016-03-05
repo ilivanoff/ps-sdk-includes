@@ -76,13 +76,17 @@ final class PsAuditController {
 
             $userId = AuthManager::validateUserIdOrNull($userId);
             $userIdAuthed = AuthManager::getUserIdOrNull();
+            $remoteIp = ServerArrayAdapter::REMOTE_ADDR();
+            $userAgent = ServerArrayAdapter::HTTP_USER_AGENT();
 
             if ($this->LOGGER->isEnabled()) {
                 $this->LOGGER->info();
                 $this->LOGGER->info("<Запись #{}>", ++$this->counter);
                 $this->LOGGER->info('Действие: {}', $this->decodeAction($action));
-                $this->LOGGER->info('Пользователь: {}', is_inumeric($userId) ? $userId : 'НЕТ');
-                $this->LOGGER->info('Авторизованный пользователь: {}', is_inumeric($userIdAuthed) ? $userIdAuthed : 'НЕТ');
+                $this->LOGGER->info('Пользователь: {}', is_null($userId) ? 'НЕТ' : $userId);
+                $this->LOGGER->info('Авторизованный пользователь: {}', is_null($userIdAuthed) ? 'НЕТ' : $userIdAuthed);
+                $this->LOGGER->info('REMOTE_ADDR: {}', $remoteIp);
+                $this->LOGGER->info('HTTP_USER_AGENT: {}', $userAgent);
                 $this->LOGGER->info('Данные: {}', $data === null ? 'НЕТ' : print_r($data, true));
             }
 
@@ -102,7 +106,18 @@ final class PsAuditController {
 
             PsCheck::phpVarType($data, array(PsConst::PHP_TYPE_NULL, PsConst::PHP_TYPE_STRING, PsConst::PHP_TYPE_DOUBLE, PsConst::PHP_TYPE_FLOAT, PsConst::PHP_TYPE_INTEGER));
 
-            $recId = UtilsBean::inst()->saveAudit($userId, $userIdAuthed, $this->code, $action, $data, $encoded);
+            $what = array();
+            $what['id_process'] = $this->code;
+            $what['id_user'] = $userId;
+            $what['id_user_authed'] = $userIdAuthed;
+            $what['n_action'] = $action;
+            $what['v_data'] = $data;
+            $what['b_encoded'] = $encoded;
+            $what['v_remote_addr'] = PsCheck::isIp($remoteIp) ? $remoteIp : null;
+            $what['v_user_agent'] = PsStrings::ensureLen($userAgent);
+            $what[] = Query::assocParam('dt_event', 'UNIX_TIMESTAMP()', false);
+
+            $recId = PSDB::insert(Query::insert('ps_audit', $what));
 
             if ($this->LOGGER->isEnabled()) {
                 if ($data !== null) {

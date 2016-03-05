@@ -98,6 +98,17 @@ final class PsStrings {
         return self::replaceMap($string, $params, '{', '}');
     }
 
+    /**
+     * Метод проверяет, что строка не длиннее переданного значения
+     * TODO - написать тесты
+     * 
+     * @param string $string - строка
+     * @param int $maxLen - максимальная длина
+     */
+    public static function ensureLen($string, $maxLen = 255) {
+        return $maxLen <= 0 ? '' : (ps_strlen($string) <= $maxLen ? $string : ps_substr($string, 0, $maxLen));
+    }
+
 }
 
 ?>
