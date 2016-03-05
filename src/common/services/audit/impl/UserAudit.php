@@ -30,9 +30,7 @@ final class UserAudit extends PsAuditAbstract {
      * Аудит входа пользователя в систему
      */
     public static function afterLogin($userId) {
-        $data['ip'] = ServerArrayAdapter::REMOTE_ADDR();
-        $data['agent'] = ServerArrayAdapter::HTTP_USER_AGENT();
-        parent::doAudit(self::ACTION_LOGIN, $data, $userId);
+        parent::doAudit(self::ACTION_LOGIN, null, $userId);
     }
 
     /**

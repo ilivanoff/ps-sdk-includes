@@ -69,8 +69,10 @@ final class PsAuditController {
      * @param int $action - код действия, который должен быть определён в классе в виде константы ACTION_
      * @param mixed $data - данные аудита
      * @param int $userId - код пользователя для аудита. Авторизованный пользователь будет записан всё равно
+     * @param type $instId - код экземпляра, для каждой подсистемы свой
+     * @param type $typeId - код типа, для каждой подсистемы свой
      */
-    public function doAudit($action, $data = null, $userId = null) {
+    public function doAudit($action, $data = null, $userId = null, $instId = null, $typeId = null) {
         try {
             $action = $this->checkActionCode($action);
 
@@ -78,6 +80,8 @@ final class PsAuditController {
             $userIdAuthed = AuthManager::getUserIdOrNull();
             $remoteIp = ServerArrayAdapter::REMOTE_ADDR();
             $userAgent = ServerArrayAdapter::HTTP_USER_AGENT();
+            $instId = PsCheck::intOrNull($instId);
+            $typeId = PsCheck::intOrNull($typeId);
 
             if ($this->LOGGER->isEnabled()) {
                 $this->LOGGER->info();
@@ -87,6 +91,8 @@ final class PsAuditController {
                 $this->LOGGER->info('Авторизованный пользователь: {}', is_null($userIdAuthed) ? 'НЕТ' : $userIdAuthed);
                 $this->LOGGER->info('REMOTE_ADDR: {}', $remoteIp);
                 $this->LOGGER->info('HTTP_USER_AGENT: {}', $userAgent);
+                $this->LOGGER->info('Код экземпляра: {}', $instId === null ? 'НЕТ' : $instId);
+                $this->LOGGER->info('Код типы: {}', $typeId === null ? 'НЕТ' : $typeId);
                 $this->LOGGER->info('Данные: {}', $data === null ? 'НЕТ' : print_r($data, true));
             }
 
@@ -111,6 +117,8 @@ final class PsAuditController {
             $what['id_user'] = $userId;
             $what['id_user_authed'] = $userIdAuthed;
             $what['n_action'] = $action;
+            $what['id_inst'] = $instId;
+            $what['id_type'] = $typeId;
             $what['v_data'] = $data;
             $what['b_encoded'] = $encoded;
             $what['v_remote_addr'] = PsCheck::isIp($remoteIp) ? $remoteIp : null;
@@ -130,6 +138,7 @@ final class PsAuditController {
         } catch (Exception $ex) {
             //Не удалось записать аудит, но работа должна быть продолжена!
             ExceptionHandler::dumpError($ex);
+            throw $ex;
         }
     }
 

@@ -616,7 +616,7 @@ function uppertrim($str) {
     return ps_strtoupper(trim($str));
 }
 
-function is_assoc_array($array) {
+function is_assoc_array(array $array) {
     //return array_keys($arr) !== range(0, (count($arr) - 1));
     $i = -1;
     foreach ($array as $k => $v) {
@@ -627,6 +627,15 @@ function is_assoc_array($array) {
     return false;
 }
 
+function is_inumeric_array_keys(array $array) {
+    foreach ($array as $k => $v) {
+        if (!is_inumeric($k)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function array_to_string(array $array, $assoc = false) {
     $assoc = $assoc || is_assoc_array($array);
     $result = array();
@@ -634,6 +643,21 @@ function array_to_string(array $array, $assoc = false) {
         $result[] = ($assoc ? "$key=>" : '') . (is_array($value) ? array_to_string($value, false) : var_export($value, true));
     }
     return '[' . implode(', ', $result) . ']';
+}
+
+function ps_array_merge(array $a1, array $a2) {
+    //Быстрая проверка на пустоту одного из массивов
+    if (!$a1 || !$a2) {
+        return $a1 ? $a1 : $a2; //---
+    }
+    //Если один из массивов содержат только численные ключи, но идущие не по порядку - работаем как с ассоциативным массивом
+    if ((is_assoc_array($a1) && is_inumeric_array_keys($a1)) || (is_assoc_array($a2) && is_inumeric_array_keys($a2))) {
+        foreach ($a2 as $k => $v) {
+            $a1[$k] = $v;
+        }
+        return $a1; //---
+    }
+    return array_merge($a1, $a2); //---
 }
 
 /*

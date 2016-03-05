@@ -434,7 +434,7 @@ final class PsUtil {
                         continue; //---
                     }
                     //В исходном и целевом ini файле - массивы, нужно их смёрджить
-                    $result[$section][$key] = array_merge($result[$section][$key], $value);
+                    $result[$section][$key] = ps_array_merge($result[$section][$key], $value);
                 }
             }
             #foreach ini file
