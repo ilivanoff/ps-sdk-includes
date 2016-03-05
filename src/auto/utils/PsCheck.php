@@ -172,7 +172,7 @@ final class PsCheck {
      * Метод проверяет, является ли строка валидным email адресом
      */
     public static function isEmail($email) {
-        return !!filter_var($email, FILTER_VALIDATE_EMAIL);
+        return self::isNotEmptyString($email) && !!filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     /**

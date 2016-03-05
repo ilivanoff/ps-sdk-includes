@@ -59,6 +59,13 @@ final class PsRand {
         return rand(1, 255) . '.' . rand(0, 255) . '.' . rand(0, 255) . '.' . rand(0, 255);
     }
 
+    /**
+     * Случайный email
+     */
+    public static function mail() {
+        return self::string(6) . '@mail.ru';
+    }
+
 }
 
 ?>
