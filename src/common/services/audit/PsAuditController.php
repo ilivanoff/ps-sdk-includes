@@ -53,7 +53,7 @@ final class PsAuditController {
      */
     public function decodeAction($actionCode) {
         $actionCode = $this->checkActionCode($actionCode);
-        return PsUtil::getClassConstByValue($this->class, 'ACTION_', $actionCode) . ' (' . $actionCode . ')';
+        return array_search($actionCode, $this->actions) . ' (' . $actionCode . ')';
     }
 
     /**
@@ -207,7 +207,14 @@ final class PsAuditController {
 
         //Проверим, что коды действий уникальны
         PsUtil::assertClassHasDifferentConstValues($this->class, 'ACTION_');
-        $this->actions = PsUtil::getClassConsts($this->class, 'ACTION_');
+
+        //Загрузим все действия, откинув префикс ACTION_
+        $this->actions = array();
+        foreach (PsUtil::getClassConsts($this->class, 'ACTION_') as $aname => $acode) {
+            $this->actions[cut_string_start($aname, 'ACTION_')] = $acode;
+        }
+
+        //Если нет действий - это ошибка
         if (empty($this->actions)) {
             return PsUtil::raise('Не зарегистрировано ни одного действия в классе аудита \'{}\'', $this->class);
         }

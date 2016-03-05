@@ -13,7 +13,7 @@ final class AdminAuditTools {
     public static function getAuditTypeCombo() {
         $data = array();
         foreach (ConfigIni::audits()as $processCode => $class) {
-            $data[] = PsHtml::comboOption($processCode, $class . '&nbsp;&nbsp;(' . $processCode . ')');
+            $data[] = PsHtml::comboOption($processCode, "[$processCode] $class");
         }
         return $data;
     }
@@ -24,8 +24,8 @@ final class AdminAuditTools {
     public static function getAuditActionsCombo() {
         $data = array();
         foreach (ConfigIni::audits()as $processCode => $class) {
-            foreach (PsAuditController::inst($processCode)->getActions() as $name => $code) {
-                $data[] = PsHtml::comboOption($code, $name . "&nbsp;&nbsp;($code)", array('data' => array('process' => $processCode)));
+            foreach (PsAuditController::inst($processCode)->getActions() as $name => $actionCode) {
+                $data[] = PsHtml::comboOption($actionCode, "[$actionCode] $name", array('data' => array('process' => $processCode)));
             }
         }
         return $data;
