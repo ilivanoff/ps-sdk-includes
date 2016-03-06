@@ -1,6 +1,6 @@
 <?php
 
-final class PsDevMethods {
+final class DevUsers {
     /*
      * 
      * 
