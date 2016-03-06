@@ -33,7 +33,7 @@ final class PsDevMethods {
      */
     public static final function genereteTestUsers($cnt = 10) {
         for ($index = 0; $index < $cnt; $index++) {
-            $userId = TESTBean::inst()->createTestUser();
+            $userId = AdminDevBean::inst()->createTestUser();
             self::updateUserAvatars($userId);
         }
     }
@@ -42,8 +42,8 @@ final class PsDevMethods {
      * Установка аватаров пользователя
      */
     public static final function updateUserAvatars($userId = null) {
-        foreach (TESTBean::inst()->getUserIds($userId) as $uId) {
-            TESTBean::inst()->unsetAvatarUploads($uId);
+        foreach (AdminDevBean::inst()->getUserIds($userId) as $uId) {
+            AdminDevBean::inst()->unsetAvatarUploads($uId);
             $avatarDi = self::getAvatarImg();
             $uploadedDi = AvatarUploader::inst()->makeUploadedFile($avatarDi, $uId);
             PsUser::inst($uId)->setAvatar($uploadedDi->getData('id'));
@@ -54,10 +54,10 @@ final class PsDevMethods {
      * Удаление тестовых пользователей
      */
     public static final function removeTestUsers() {
-        foreach (TESTBean::inst()->getUserIds() as $uId) {
-            if (TESTBean::inst()->isTestUser($uId)) {
-                TESTBean::inst()->unsetAvatarUploads($uId);
-                TESTBean::inst()->removeTestUser($uId);
+        foreach (AdminDevBean::inst()->getUserIds() as $uId) {
+            if (AdminDevBean::inst()->isTestUser($uId)) {
+                AdminDevBean::inst()->unsetAvatarUploads($uId);
+                AdminDevBean::inst()->removeTestUser($uId);
             }
         }
     }

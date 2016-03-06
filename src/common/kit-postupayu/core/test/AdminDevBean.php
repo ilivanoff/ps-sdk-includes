@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Description of BPBean
+ * Бин администратора, доступ к которому должен быть только в devmode
  *
  * @author Admin
  */
-class TESTBean extends BaseBean {
+class AdminDevBean extends BaseBean {
 
     public function testDates() {
 //        $id = $this->insert('INSERT INTO test (dt) values (?)', array('2012-01-01'));
@@ -71,7 +71,7 @@ values
         return (int) $userId['id_user'];
     }
 
-    /** @return TESTBean */
+    /** @return AdminDevBean */
     public static function inst() {
         return parent::inst();
     }
