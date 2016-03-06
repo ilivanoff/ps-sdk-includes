@@ -45,7 +45,7 @@ class DirManager {
     }
 
     //images
-    public static function images($subDirs = null) {
+    public static function images() {
         return self::inst(PS_DIR_CONTENT . DIR_SEPARATOR . 'images');
     }
 

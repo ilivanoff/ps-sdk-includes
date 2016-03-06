@@ -71,58 +71,6 @@ values
         return (int) $userId['id_user'];
     }
 
-    public function getRandomCommentId($commentsTable, $postId) {
-        $commentId = $this->getRec("select id_comment from $commentsTable where id_post=? order by RAND() limit 1", $postId);
-        return $commentId === null ? null : (int) $commentId['id_comment'];
-    }
-
-    public function deleteAllComments($commentsTable) {
-        $this->update("update $commentsTable set id_parent=null");
-        $this->update("delete from $commentsTable");
-    }
-
-    public function deleteTestPosts($postTable) {
-        if ($postTable == 'train_post') {
-            $this->update("delete from user_lessons where id_post in (select id_post from train_post where ident like 'test_%')");
-        }
-        $this->update("delete from $postTable where ident like 'test_%'");
-    }
-
-    public function deleteTestRubrics($rubricTable) {
-        $this->update("delete from $rubricTable where ident like 'test_%'");
-    }
-
-    public function createRubric($rubricTable, $name, $ident, $content, $b_tpl = 0) {
-        $max = $this->getRec("select max(id_rubric)+1 as id from $rubricTable");
-        $nextId = $max['id'];
-        $this->insert("insert into $rubricTable (id_rubric, name, ident, content, b_tpl) VALUES (?,?,?,?,?)", array($nextId, $name, $ident, $content, $b_tpl));
-    }
-
-    public function createPost($rubricTable, $postTable, $name, $ident, $content, $showcase, $b_tpl = 0) {
-        $this->insert("
-insert into $postTable (
-   id_rubric
-  ,name
-  ,dt_publication
-  ,b_show
-  ,rev_count
-  ,ident
-  ,content
-  ,content_showcase
-  ,b_tpl
-) VALUES (
-   (select id_rubric from $rubricTable r order by RAND() limit 1)
-  ,?  ,UNIX_TIMESTAMP()  ,1  ,0  ,?  ,?  ,?  ,?)", array($name, $ident, $content, $showcase, $b_tpl));
-    }
-
-    public function getAllMessages(DiscussionSettings $settings) {
-        return $this->getArray('select * from ' . $settings->getTable() . ' where b_deleted=0');
-    }
-
-    public function cleanVotes() {
-        $this->update('delete from ps_votes');
-    }
-
     /** @return TESTBean */
     public static function inst() {
         return parent::inst();

@@ -1,11 +1,6 @@
 <?php
 
 final class PsDevMethods {
-
-    /** @var TESTBean */
-    private $BEAN;
-
-
     /*
      * 
      * 
@@ -19,70 +14,51 @@ final class PsDevMethods {
      * 
      * 
      */
-    private $avatars;
+
+    private static $images = null; //---
+
+    private static function avatarImages() {
+        PsDefines::assertProductionOff(__CLASS__);
+        return is_array(self::$images) ? self::$images : self::$images = DirManager::images()->getDirContent('avatars', DirItemFilter::IMAGES);
+    }
 
     /** @return DirItem */
-    private function getAvatarImg() {
-        if (!isset($this->avatars)) {
-            $this->avatars = array_values(DirManager::images('avatars')->getDirContent(null, DirItemFilter::IMAGES));
-            check_condition($this->avatars, 'No avatar images');
-        }
-        return $this->avatars[rand(0, count($this->avatars) - 1)];
+    private static function getAvatarImg() {
+        return self::avatarImages()[array_rand(self::avatarImages())];
     }
 
     /**
      * Генерация пользователей.
      * cnt - кол-во пользователей, которое будет сгенерировано
      */
-    public final function genereteTestUsers($cnt = 10) {
+    public static final function genereteTestUsers($cnt = 10) {
         for ($index = 0; $index < $cnt; $index++) {
-            $userId = $this->BEAN->createTestUser();
-            $this->updateUserAvatars($userId);
+            $userId = TESTBean::inst()->createTestUser();
+            self::updateUserAvatars($userId);
         }
     }
 
     /**
      * Установка аватаров пользователя
      */
-    public final function updateUserAvatars($userId = null) {
-        $userIds = TESTBean::inst()->getUserIds($userId);
-        foreach ($userIds as $userId) {
-            $this->BEAN->unsetAvatarUploads($userId);
-            $avatarDi = $this->getAvatarImg();
-            $uploadedDi = AvatarUploader::inst()->makeUploadedFile($avatarDi, $userId);
-            PsUser::inst($userId)->setAvatar($uploadedDi->getData('id'));
+    public static final function updateUserAvatars($userId = null) {
+        foreach (TESTBean::inst()->getUserIds($userId) as $uId) {
+            TESTBean::inst()->unsetAvatarUploads($uId);
+            $avatarDi = self::getAvatarImg();
+            $uploadedDi = AvatarUploader::inst()->makeUploadedFile($avatarDi, $uId);
+            PsUser::inst($uId)->setAvatar($uploadedDi->getData('id'));
         }
     }
 
     /**
      * Удаление тестовых пользователей
      */
-    public final function removeTestUsers() {
-        $userIds = TESTBean::inst()->getUserIds();
-        foreach ($userIds as $userId) {
-            if ($this->BEAN->isTestUser($userId)) {
-                $this->BEAN->unsetAvatarUploads($userId);
-                $this->BEAN->removeTestUser($userId);
+    public static final function removeTestUsers() {
+        foreach (TESTBean::inst()->getUserIds() as $uId) {
+            if (TESTBean::inst()->isTestUser($uId)) {
+                TESTBean::inst()->unsetAvatarUploads($uId);
+                TESTBean::inst()->removeTestUser($uId);
             }
-        }
-    }
-
-    /**
-     * Даёт очки пользователю
-     */
-    public final function givePoints2Users($userId = null, $cnt = 15) {
-        $users = TESTBean::inst()->getUserIds($userId);
-        foreach ($users as $uid) {
-            UP_fromadmin::inst()->givePoints(PsUser::inst($uid), $cnt, getRandomString());
-        }
-    }
-
-    /**
-     * Привязывает все ячейки пользователя к картинке-мозайке
-     */
-    public final function bindAllUsersCells($imgId = 1, $userId = null) {
-        foreach (TESTBean::inst()->getUserIds($userId) as $uId) {
-            MosaicImage::inst($imgId)->bindAllUserCells($uId);
         }
     }
 
