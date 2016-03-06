@@ -28,6 +28,7 @@ final class ConfigIni extends AbstractIni {
     const GROUP_JS_BRIGE = 'php-js-brige';
     const GROUP_USER_INTERACTION = 'user-interaction';
     const GROUP_AUDIT = 'audit';
+    const GROUP_DEV_CLASSES = 'dev-classes';
 
     /*
      * CORE
@@ -235,6 +236,18 @@ final class ConfigIni extends AbstractIni {
     public static function userActivityInterval() {
         return PsCheck::int(self::getPropCheckType(self::GROUP_USER_INTERACTION, 'activity-interval', array(PsConst::PHP_TYPE_STRING)));
     }
+
+    /*
+     * TEST METHODS
+     */
+
+    public static function devClasses() {
+        return self::getPropCheckType(self::GROUP_DEV_CLASSES, 'classes', array(PsConst::PHP_TYPE_ARRAY));
+    }
+
+    /*
+     * COMMON
+     */
 
     public static function isSdk() {
         return self::projectName() == 'sdk';

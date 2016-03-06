@@ -3,13 +3,11 @@
 class TestAction extends AbstractAdminAjaxAction {
 
     protected function getRequiredParamKeys() {
-        return array('method');
+        return array('class', 'method');
     }
 
     protected function executeImpl(ArrayAdapter $params) {
-        $method = $params->str('method');
-        $params = $params->arr('params');
-        TestManagerCaller::execute($method, $params);
+        PsDevClasses::execute($params->str('class'), $params->str('method'), $params->arr('params'));
         return new AjaxSuccess();
     }
 
