@@ -1,14 +1,6 @@
 <?php
 
-class TestAction extends AbstractAjaxAction {
-
-    protected function getAuthType() {
-        return AuthManager::AUTH_TYPE_NO_MATTER;
-    }
-
-    protected function isCheckActivity() {
-        return false;
-    }
+class TestAction extends AbstractAdminAjaxAction {
 
     protected function getRequiredParamKeys() {
         return array('method');

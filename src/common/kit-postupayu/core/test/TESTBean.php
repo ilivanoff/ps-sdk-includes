@@ -130,6 +130,7 @@ insert into $postTable (
 
     protected function __construct() {
         PsDefines::assertProductionOff(__CLASS__);
+        AuthManager::checkAdminAccess();
         parent::__construct();
     }
 
