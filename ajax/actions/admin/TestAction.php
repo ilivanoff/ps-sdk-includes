@@ -7,7 +7,7 @@ class TestAction extends AbstractAdminAjaxAction {
     }
 
     protected function executeImpl(ArrayAdapter $params) {
-        PsDevClasses::execute($params->str('type'), $params->str('class'), $params->str('method'), $params->arr('params'));
+        PsAdminAccessClasses::execute($params->str('type'), $params->str('class'), $params->str('method'), $params->arr('params'));
         return new AjaxSuccess();
     }
 

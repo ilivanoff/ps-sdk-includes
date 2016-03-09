@@ -5,7 +5,7 @@
  *
  * @author azazello
  */
-final class PsDevClasses {
+final class PsAdminAccessClasses {
 
     /** Список методов, которые можно вызывать */
     private static $METHODS;
