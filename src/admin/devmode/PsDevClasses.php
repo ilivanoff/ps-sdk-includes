@@ -21,29 +21,36 @@ final class PsDevClasses {
         //Проверяем доступ админа
         AuthManager::checkAdminAccess();
 
-        //Проверим, что это девелоперский режим
-        PsDefines::assertProductionOff(__CLASS__);
+        //Составим список методов
+        $CLASSES[ConfigIni::GROUP_ADMIN_ACCESS_METHODS_ALL] = ConfigIni::adminAccessMethods(ConfigIni::GROUP_ADMIN_ACCESS_METHODS_ALL);
+        //Если девелоперский режим - добавим методы девелоперского режима
+        if (PsDefines::isDevmode()) {
+            $CLASSES[ConfigIni::GROUP_ADMIN_ACCESS_METHODS_DEV] = ConfigIni::adminAccessMethods(ConfigIni::GROUP_ADMIN_ACCESS_METHODS_DEV);
+        }
 
-        //Пробегаемся по всем настроенным классам и выбираем их 'public static funal' методы (сначала отдадим проектные методы)
-        foreach (array_reverse(ConfigIni::devClasses()) as $devClassName) {
-            self::$METHODS[$devClassName] = array();
+        //Пробегаемся по всем настроенным классам и выбираем их 'public static funal' методы
+        foreach ($CLASSES as $Type => $classesArr) {
+            //Сначала отдадим проектные методы
+            foreach (array_reverse($classesArr) as $ClassName) {
+                self::$METHODS[$Type][$ClassName] = array();
 
-            foreach (PsUtil::getClassMethods($devClassName, true, true, true, true) as $methodName) {
-                $method = new ReflectionMethod($devClassName, $methodName);
+                foreach (PsUtil::getClassMethods($ClassName, true, true, true, true) as $MethodName) {
+                    $method = new ReflectionMethod($ClassName, $MethodName);
 
-                $params['name'] = $methodName;
-                $params['descr'] = implode("\n", StringUtils::parseMultiLineComments($method->getDocComment()));
-                $params['params'] = array();
+                    $params['name'] = $MethodName;
+                    $params['descr'] = implode("\n", StringUtils::parseMultiLineComments($method->getDocComment()));
+                    $params['params'] = array();
 
-                /* @var $param ReflectionParameter */
-                foreach ($method->getParameters() as $param) {
-                    $params['params'][] = array(
-                        'name' => $param->getName(),
-                        'dflt' => $param->isDefaultValueAvailable() ? var_export($param->getDefaultValue(), true) : null
-                    );
+                    /* @var $param ReflectionParameter */
+                    foreach ($method->getParameters() as $param) {
+                        $params['params'][] = array(
+                            'name' => $param->getName(),
+                            'dflt' => $param->isDefaultValueAvailable() ? var_export($param->getDefaultValue(), true) : null
+                        );
+                    }
+
+                    self::$METHODS[$Type][$ClassName][$MethodName] = $params;
                 }
-
-                self::$METHODS[$devClassName][$methodName] = $params;
             }
         }
 
@@ -57,16 +64,19 @@ final class PsDevClasses {
      * @param string $method - название метода
      * @return bool
      */
-    private static function hasMethod($class, $method) {
-        return is_array(array_get_value_in(array($class, $method), self::getMethodsList()));
+    private static function hasMethod($type, $class, $method) {
+        return is_array(array_get_value_in(array($type, $class, $method), self::getMethodsList()));
     }
 
     /**
      * Вызов выполнения метода. Используется из ajax.
      */
-    public static function execute($class, $method, array $params) {
-        if (!self::hasMethod($class, $method)) {
-            return PsUtil::raise('Метод {}::{} не зарегистрирован', $class, $method);
+    public static function execute($type, $class, $method, array $params) {
+        //Проверим админские прова доступа
+        AuthManager::checkAdminAccess();
+
+        if (!self::hasMethod($type, $class, $method)) {
+            return PsUtil::raise('Метод {}::{} (контекст {}) не зарегистрирован', $class, $method, $type);
         }
 
         PsUtil::startUnlimitedMode();

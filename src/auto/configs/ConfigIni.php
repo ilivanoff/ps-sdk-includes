@@ -6,6 +6,9 @@
  * @author azazello
  */
 final class ConfigIni extends AbstractIni {
+    /*
+     * Группы
+     */
 
     const GROUP_CORE = 'core';
     const GROUP_LOGGING = 'logging';
@@ -28,7 +31,13 @@ final class ConfigIni extends AbstractIni {
     const GROUP_JS_BRIGE = 'php-js-brige';
     const GROUP_USER_INTERACTION = 'user-interaction';
     const GROUP_AUDIT = 'audit';
-    const GROUP_DEV_CLASSES = 'dev-classes';
+    const GROUP_ADMIN_ACCESS_METHODS = 'admin-access-methods';
+
+    /*
+     * Подгруппы
+     */
+    const GROUP_ADMIN_ACCESS_METHODS_ALL = 'all';
+    const GROUP_ADMIN_ACCESS_METHODS_DEV = 'dev';
 
     /*
      * CORE
@@ -241,8 +250,8 @@ final class ConfigIni extends AbstractIni {
      * TEST METHODS
      */
 
-    public static function devClasses() {
-        return self::getPropCheckType(self::GROUP_DEV_CLASSES, 'classes', array(PsConst::PHP_TYPE_ARRAY));
+    public static function adminAccessMethods($type) {
+        return to_array(self::getPropCheckType(self::GROUP_ADMIN_ACCESS_METHODS, PsUtil::assertClassHasConstVithValue(__CLASS__, 'GROUP_ADMIN_ACCESS_METHODS_', $type), array(PsConst::PHP_TYPE_NULL, PsConst::PHP_TYPE_ARRAY)));
     }
 
     /*
