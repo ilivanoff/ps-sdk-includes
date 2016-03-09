@@ -35,21 +35,7 @@ final class PsAdminAccessClasses {
                 self::$METHODS[$Type][$ClassName] = array();
 
                 foreach (PsUtil::getClassMethods($ClassName, true, true, true, true) as $MethodName) {
-                    $method = new ReflectionMethod($ClassName, $MethodName);
-
-                    $params['name'] = $MethodName;
-                    $params['descr'] = implode("\n", StringUtils::parseMultiLineComments($method->getDocComment()));
-                    $params['params'] = array();
-
-                    /* @var $param ReflectionParameter */
-                    foreach ($method->getParameters() as $param) {
-                        $params['params'][] = array(
-                            'name' => $param->getName(),
-                            'dflt' => $param->isDefaultValueAvailable() ? var_export($param->getDefaultValue(), true) : null
-                        );
-                    }
-
-                    self::$METHODS[$Type][$ClassName][$MethodName] = $params;
+                    self::$METHODS[$Type][$ClassName][$MethodName] = PsReflect::describeMethod($ClassName, $MethodName);
                 }
             }
         }

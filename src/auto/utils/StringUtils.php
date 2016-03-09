@@ -4,23 +4,37 @@ class StringUtils {
 
     /**
      * Принимает на вход многострочный комментарий и возвращает массив строк,
-     * из которых он состоит. Для данного комментария будет два элемента в массиве.
+     * из которых он состоит.
+     * 
+     * @param string $comments - комментарий
+     * @param array $annotations - если передан не null, то в данный массив будут собраны аннотации из комментария
+     * @return string
      */
-    public static function parseMultiLineComments($comments) {
+    public static function parseMultiLineComments($comments, array &$annotations = null) {
         $comments = trim($comments);
 
         $lines = array();
         foreach (explode("\n", $comments) as $line) {
             $line = trim($line);
             if (!$line || starts_with($line, '/*') || ends_with($line, '*/')) {
-                continue;
+                continue; //---
             }
             if (starts_with($line, '*')) {
                 $line = trim(first_char_remove($line));
-                if ($line) {
-                    $lines[] = $line;
+                if (!$line) {
+                    continue; //---
                 }
-                continue;
+                if (is_array($annotations) && starts_with($line, '@')) {
+                    $ann = explode(' ', $line, 2);
+                    $annName = trim(first_char_remove($ann[0]));
+                    if ($annName) {
+                        $annotations[$annName] = trim(count($ann) == 1 ? '' : $ann[1]);
+                        continue; //---
+                    }
+                }
+
+                $lines[] = $line;
+                continue; //---
             }
         }
         return $lines;
