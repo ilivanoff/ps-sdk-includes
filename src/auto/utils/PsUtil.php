@@ -459,6 +459,22 @@ final class PsUtil {
     }
 
     /**
+     * Метод проверяет передонное условние на непустоту (не просто на true)
+     * 
+     * @param mixed $condition - условие
+     * @param string $msg - сообщение
+     * @param mixed $param1, $param2 - параметры
+     */
+    public static function assert($condition, $msg, $param1 = null, $param2 = null) {
+        if (isEmpty($condition)) {
+            $params = func_get_args();
+            unset($params[0]);
+            return call_user_func_array(array(__CLASS__, 'raise'), $params); //---
+        }
+        return $condition; //---
+    }
+
+    /**
      * Метод проверят, выполняется ли код в контексте WordPress
      */
     public static function isWordPress() {

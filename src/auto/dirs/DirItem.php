@@ -398,6 +398,11 @@ class DirItem implements Spritable {
         return $this->getAdapterImpl('TextPropsAdapter');
     }
 
+    /** @return ZipWriteFileAdapter */
+    public function getZipWriteFileAdapter() {
+        return $this->getAdapterImpl('ZipWriteFileAdapter');
+    }
+
     /*
      * Сериализация/десериализация массивов
      */

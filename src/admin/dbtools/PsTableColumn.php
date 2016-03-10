@@ -143,7 +143,7 @@ class PsTableColumn extends BaseDataStore {
             if (is_string($val) && contains_substring($val, 'select')) {
                 return ensure_ends_with(ensure_starts_with($val, '('), ')');
             }
-            return is_numeric($val) ? 1 * $val : null;
+            return is_numeric($val) ? 1 * $val : 'null';
         }
 
         switch ($this->getType()) {
