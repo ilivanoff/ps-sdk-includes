@@ -19,6 +19,13 @@ final class PSSelect extends Query {
         $this->addWhere($where)->setGroup($group)->setOrder($order)->setLimit($limit);
     }
 
+    /**
+     * Метод возвращает таблицу, из которой будет выполнен запрос
+     */
+    public function getTable() {
+        return $this->table;
+    }
+
     /** @return PSSelect */
     public function addWhere($where) {
         return parent::addWhere($where);

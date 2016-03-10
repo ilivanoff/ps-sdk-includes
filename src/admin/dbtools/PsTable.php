@@ -171,16 +171,21 @@ class PsTable extends BaseDataStore {
     /**
      * Выполняет загрузку всех строк из таблицы
      */
-    public function getRows() {
-        return PSDB::getArray('select * from ' . $this->getName());
+    public function getRows(PSSelect $select = null) {
+        if ($select) {
+            check_condition($select->getTable() == $this->getName(), 'Illegal select table passed: ' . $select->getTable() . '. Expected: ' . $this->getName() . '.');
+        } else {
+            $select = PSSelect::select('*', $this->getName());
+        }
+        return PSDB::getArray($select);
     }
 
     /**
      * Выгружает данные таблицы в виде массива инсертов
      */
-    public function exportAsSqlArray($action = PS_ACTION_CREATE) {
+    public function exportAsSqlArray($action = PS_ACTION_CREATE, PSSelect $select = null) {
         $inserts = array();
-        foreach ($this->getRows() as $row) {
+        foreach ($this->getRows($select) as $row) {
             $inserts[] = $this->getSql($row, $action);
         }
         return $inserts;
@@ -192,9 +197,9 @@ class PsTable extends BaseDataStore {
      * 
      * @return type
      */
-    public function exportAsSqlString($action = PS_ACTION_CREATE) {
+    public function exportAsSqlString($action = PS_ACTION_CREATE, PSSelect $select = null) {
         $glue = ";\n";
-        $inserts = implode($glue, $this->exportAsSqlArray($action));
+        $inserts = implode($glue, $this->exportAsSqlArray($action, $select));
         return $inserts ? $inserts . $glue : '';
     }
 
