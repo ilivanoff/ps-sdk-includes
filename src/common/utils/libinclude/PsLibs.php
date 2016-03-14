@@ -73,7 +73,7 @@ class PsLibs {
             return; //---
         }
         require_once $this->SDK_LIB_DIR . 'Censure/Censure-3.2.7/UTF8.php';
-        require_once $this->SDK_LIB_DIR . 'Censure/Censure-3.2.7/ReflectionTypehint.php';
+        require_once $this->SDK_LIB_DIR . 'Censure/Censure-3.2.7/ReflectionTypeHint.php';
         require_once $this->SDK_LIB_DIR . 'Censure/Censure-3.2.7/Text/Censure.php';
     }
 
