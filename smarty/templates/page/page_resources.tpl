@@ -96,7 +96,7 @@
 {/if}
 
 {if !isset($MATHJAX_DISABLE) || !$MATHJAX_DISABLE}
-    <script type="text/javascript" src="/ps-content/js-lib/MathJax/MathJax.js"></script>
+    {linkup_js dir="/ps-content/js-lib" name="MathJax/MathJax.js"}
 {/if}
 
 

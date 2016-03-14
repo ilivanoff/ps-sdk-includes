@@ -676,16 +676,18 @@ abstract class FoldedResources extends AbstractSingleton {
         $tokens = array();
         foreach ($this->RESOURCE_TYPES_LINKED as $type) {
             $di = $this->getResourceDi($ident, $type);
-            switch ($type) {
-                case self::RTYPE_JS:
-                    $tokens[] = PsHtml::linkJs($di);
-                    break;
-                case self::RTYPE_CSS:
-                    $tokens[] = PsHtml::linkCss($di);
-                    break;
-                case self::RTYPE_PCSS:
-                    $tokens[] = PsHtml::linkCss($di, 'print');
-                    break;
+            if ($di->isFile()) {
+                switch ($type) {
+                    case self::RTYPE_JS:
+                        $tokens[] = PsHtml::linkJs($di);
+                        break;
+                    case self::RTYPE_CSS:
+                        $tokens[] = PsHtml::linkCss($di);
+                        break;
+                    case self::RTYPE_PCSS:
+                        $tokens[] = PsHtml::linkCss($di, 'print');
+                        break;
+                }
             }
         }
         //Приаттачим спрайты
