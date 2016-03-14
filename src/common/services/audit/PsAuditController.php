@@ -78,7 +78,7 @@ final class PsAuditController {
 
             $userId = AuthManager::validateUserIdOrNull($userId);
             $userIdAuthed = AuthManager::getUserIdOrNull();
-            $remoteIp = ServerArrayAdapter::REMOTE_ADDR();
+            $remoteIp = PsIp::remoteAddr();
             $userAgent = ServerArrayAdapter::HTTP_USER_AGENT();
             $instId = PsCheck::intOrNull($instId);
             $typeId = PsCheck::intOrNull($typeId);

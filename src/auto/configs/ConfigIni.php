@@ -246,6 +246,10 @@ final class ConfigIni extends AbstractIni {
         return PsCheck::int(self::getPropCheckType(self::GROUP_USER_INTERACTION, 'activity-interval', array(PsConst::PHP_TYPE_STRING)));
     }
 
+    public static function realIpHeaderNames() {
+        return to_array(self::getPropCheckType(self::GROUP_USER_INTERACTION, 'real-ip-headers', array(PsConst::PHP_TYPE_NULL, PsConst::PHP_TYPE_ARRAY)));
+    }
+
     /*
      * TEST METHODS
      */

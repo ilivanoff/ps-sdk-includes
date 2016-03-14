@@ -59,12 +59,27 @@ class PsIp {
     }
 
     /**
+     * Метод определяет удалённый IP адрес в $_SERVER
+     * 
+     * @return bool
+     */
+    public static function remoteAddr() {
+        foreach (ConfigIni::realIpHeaderNames() as $name) {
+            $ip = ServerArrayAdapter::inst()->str($name);
+            if (PsCheck::isIp($ip)) {
+                return $ip; //---
+            }
+        }
+        return ServerArrayAdapter::REMOTE_ADDR();
+    }
+
+    /**
      * Метод проверяет, забанен ли IP адрес в $_SERVER
      * 
      * @return bool
      */
     public static function isRemoteAddrBanned() {
-        return self::isBanned(ServerArrayAdapter::REMOTE_ADDR());
+        return self::isBanned(self::remoteAddr());
     }
 
 }
