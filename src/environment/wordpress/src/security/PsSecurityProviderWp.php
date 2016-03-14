@@ -23,7 +23,7 @@ class PsSecurityProviderWp implements PsSecurityProvider {
         return $this->loggedInAsAdmin;
     }
 
-    public function __construct() {
+    public function reset() {
         $this->loggedIn = is_user_logged_in();
         $this->userId = $this->loggedIn ? PsCheck::positiveInt(get_current_user_id()) : null;
         $this->loggedInAsAdmin = $this->loggedIn ? is_super_admin($this->userId) : false;

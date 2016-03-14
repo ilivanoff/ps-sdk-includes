@@ -19,6 +19,10 @@ class PsSecurityProviderCmd implements PsSecurityProvider {
         return false;
     }
 
+    public function reset() {
+        
+    }
+
 }
 
 ?>

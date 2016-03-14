@@ -22,6 +22,11 @@ interface PsSecurityProvider {
      * Метод проверяет, авторизован ли пользователь как администратор
      */
     public function isAuthorizedAsAdmin();
+
+    /**
+     * Метод сбрасывает настройки авторизации - пользователь мог авторизоваться
+     */
+    public function reset();
 }
 
 ?>

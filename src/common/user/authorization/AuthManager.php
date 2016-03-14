@@ -186,8 +186,15 @@ final class AuthManager {
              * Пользователь авторизован!
              */
             SessionArrayHelper::setInt(SESSION_USER_PARAM, $userId);
+            /*
+             * Сброим настройки авторизации
+             */
+            PsSecurity::providerReset();
         }
 
+        /*
+         * Если успешно авторизовались - выполним ряд действий
+         */
         if (self::isAuthorized()) {
             //Убедимся в наличии пользователя
             $user = PsUser::inst($userId, true);
@@ -243,6 +250,10 @@ final class AuthManager {
             //ApplicationListener::beforeLogout(PsUser::inst());
             //Сбросим код пользователя в сессии
             SessionArrayHelper::reset(SESSION_USER_PARAM);
+            /*
+             * Сбросим настройки авторизации
+             */
+            PsSecurity::providerReset();
         }
     }
 

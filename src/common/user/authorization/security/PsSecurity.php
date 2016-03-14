@@ -37,30 +37,27 @@ final class PsSecurity {
 
         check_condition(!PsContext::isCmd() || self::$provider instanceof PsSecurityProviderCmd, 'Invalid security provider for cmd process');
 
-        $LOGGER = PsLogger::inst(__CLASS__);
-        if ($LOGGER->isEnabled()) {
-            $LOGGER->info('Context:       {}', PsContext::describe());
-            $LOGGER->info('Provider:      {}', get_class(self::$provider));
-            $LOGGER->info('Is authorized: {}', var_export(self::$provider->isAuthorized(), true));
-            $LOGGER->info('Is admin:      {}', var_export(self::$provider->isAuthorizedAsAdmin(), true));
-            $LOGGER->info('User ID:       {}', self::$provider->getUserId());
-        }
+        /*
+         * Сбрасываем провайдер (что также приведёт и к логированию)
+         */
+        self::providerReset();
+    }
+
+    /**
+     * Метод проверяет состояние
+     */
+    private static function assertState($isInited, $hasProvider) {
+        PsUtil::assert($isInited === self::$inited, self::$inited ? '{} is already initialized' : '{} is not initialized yet', __CLASS__);
+        PsUtil::assert($hasProvider === !is_null(self::$provider), !!self::$provider ? '{} provider is already setted' : '{} provider is not setted yet', __CLASS__);
     }
 
     /**
      * Метод устанавливает провайдер безопасности
+     * На момент установки провайдера не должен быть вызван метод #init() и другой провайдер не должен быть ранее установлен
      */
     public static function set(PsSecurityProvider $provider) {
-        check_condition(!self::$inited, __CLASS__ . ' is already initialized');
-        check_condition(is_null(self::$provider), __CLASS__ . ' provider is already setted');
+        self::assertState(false, false);
         self::$provider = $provider;
-    }
-
-    /**
-     * Метод проверяет, используем ли мы базовый провайдер безопасности
-     */
-    public static function isBasic() {
-        return self::$provider instanceof PsSecurityProviderSdk;
     }
 
     /**
@@ -74,7 +71,34 @@ final class PsSecurity {
      * @return PsSecurityProvider
      */
     public static final function provider() {
-        return self::$provider ? self::$provider : raise_error('Class ' . __CLASS__ . ' is not initialized');
+        self::assertState(true, true);
+        return self::$provider;
+    }
+
+    /**
+     * Метод проверяет, используем ли мы базовый провайдер безопасности
+     */
+    public static function isBasic() {
+        return self::provider() instanceof PsSecurityProviderSdk;
+    }
+
+    /**
+     * Метод сбрасывает состояние провайдера безопасности.
+     * 
+     * @return PsSecurityProvider
+     */
+    public static final function providerReset() {
+        self::provider()->reset();
+
+        $LOGGER = PsLogger::inst(__CLASS__);
+        if ($LOGGER->isEnabled()) {
+            $LOGGER->info();
+            $LOGGER->info('Context:       {}', PsContext::describe());
+            $LOGGER->info('Provider:      {}', get_class(self::$provider));
+            $LOGGER->info('Is authorized: {}', var_export(self::$provider->isAuthorized(), true));
+            $LOGGER->info('Is admin:      {}', var_export(self::$provider->isAuthorizedAsAdmin(), true));
+            $LOGGER->info('User ID:       {}', self::$provider->getUserId());
+        }
     }
 
     /**
