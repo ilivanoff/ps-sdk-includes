@@ -1,6 +1,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<link rel="shortcut icon" href="favicon.ico" />
+<link rel="shortcut icon" href="/favicon.ico" />
 
 <link rel="stylesheet" href="/ps-content/css/common.css" type="text/css" media="all" />
 <link rel="stylesheet" href="/ps-content/css/common.widgets.css" type="text/css" media="all" />
