@@ -12,7 +12,7 @@ final class SessionArrayHelper {
     }
 
     public static function hasInt($key) {
-        return is_integer(array_get_value($key, $_SESSION));
+        return PsCheck::isInt(array_get_value($key, $_SESSION));
     }
 
     public static function getInt($key) {

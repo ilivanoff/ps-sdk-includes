@@ -6,14 +6,14 @@ class ActivityWatcher {
      * Регистрация активности пользователя
      */
     public static function registerActivity() {
-        $_SESSION[SESSION_ACT_WATCHER_PARAM] = time();
+        SessionArrayHelper::setInt(SESSION_ACT_WATCHER_PARAM, time());
     }
 
     /**
      * Метод проверяет, была ли зарегистрирована активность данного пользователя
      */
     private static function isActivityRegistered() {
-        return is_numeric(array_get_value(SESSION_ACT_WATCHER_PARAM, $_SESSION));
+        return SessionArrayHelper::hasInt(SESSION_ACT_WATCHER_PARAM);
     }
 
     /**
@@ -31,7 +31,7 @@ class ActivityWatcher {
         $needWait = 0;
         //Не будем заставлять админа ждать:)
         if (self::isActivityRegistered()) {
-            $needWait = PsSettings::ACTIVITY_INTERVAL() - (time() - $_SESSION[SESSION_ACT_WATCHER_PARAM]);
+            $needWait = PsSettings::ACTIVITY_INTERVAL() - (time() - SessionArrayHelper::getInt(SESSION_ACT_WATCHER_PARAM));
         }
         return $needWait < 0 ? 0 : $needWait;
     }
