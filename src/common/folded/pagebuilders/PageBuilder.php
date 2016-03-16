@@ -142,7 +142,13 @@ final class PageBuilder extends PageBuilderResources {
 
     //На данном этапе запрос уже провалидирован в самой WebPage
     public final function buildPage(array $buildParams = array()) {
+        //HTTP Заголовки
         header('Content-Type: text/html; charset=utf-8');
+        //http://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers
+        header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
+        header('Pragma: no-cache'); // HTTP 1.0.
+        header('Expires: 0'); // Proxies.
+
         ExceptionHandler::registerPretty();
 
         //Запросим адаптер, чтобы сбросить параметры в сессии
