@@ -33,14 +33,14 @@ class PsCitates {
     private static function parseLine($line, &$auth, &$text) {
         $tokens = explode(' | ', $line, 2);
         $auth = $tokens[0];
-        $text = $tokens[1];
+        return $text = $tokens[1];
     }
 
     /**
      * Метод возвращает произвольную цитату
      */
     public static function citata(&$auth = '', &$text = '') {
-        self::parseLine(self::randomCitataLine(), $auth, $text);
+        return self::parseLine(self::randomCitataLine(), $auth, $text);
     }
 
     /**
