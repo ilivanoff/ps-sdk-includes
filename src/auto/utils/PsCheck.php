@@ -106,6 +106,23 @@ final class PsCheck {
     }
 
     /**
+     * Проверка массива на пустоту
+     */
+    public static function isNotEmptyArray($var) {
+        return is_array($var) && !empty($var);
+    }
+
+    /**
+     * Проверка строки на непустоту
+     */
+    public static function notEmptyArray($var) {
+        if (self::isNotEmptyArray($var)) {
+            return $var;
+        }
+        self::raise('Ожидается не пустой массив', $var);
+    }
+
+    /**
      * Проверка валидности названия столбца в таблице
      */
     private static function isValidTableName($tableName) {
