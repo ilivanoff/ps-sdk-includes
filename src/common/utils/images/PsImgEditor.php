@@ -60,7 +60,7 @@ final class PsImgEditor extends AbstractSingleton {
             return $this->CAHCE->get($cacheKey);
         }
 
-        $dstDi = DirManager::autogen("images/$dim")->cdToHashFolder(null, null, $cacheKey)->getDirItem(null, $cacheKey, SYSTEM_IMG_TYPE);
+        $dstDi = DirManager::autogen(DirManager::DIR_IMAGES . DIR_SEPARATOR . $dim)->cdToHashFolder(null, null, $cacheKey)->getDirItem(null, $cacheKey, SYSTEM_IMG_TYPE);
         if ($dstDi->isImg()) {
             return $this->CAHCE->set($cacheKey, $dstDi);
         }
