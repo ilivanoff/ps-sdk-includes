@@ -17,6 +17,7 @@ class DirManager {
     const DIR_COMMON = 'common';
     const DIR_LIB = 'lib';
     const DIR_SRC = 'src';
+    const DIR_IMAGES = 'images';
     const DIR_FORMULES = 'formules';
     const DIR_SERVICE = 'service';
     const DIR_SPRITES = 'sprites';
