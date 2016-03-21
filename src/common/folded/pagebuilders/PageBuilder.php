@@ -65,28 +65,29 @@ final class PageBuilder extends PageBuilderResources {
         );
     }
 
-    private function jsCommon() {
-        $params['url'] = PsUrl::current();
-        $params['userId'] = AuthManager::getUserIdOrNull();
-        $params['isAuthorized'] = AuthManager::isAuthorized();
-        $params['isDOA'] = PsSettings::DEVMODE_OR_ADMIN();
-        $params['isLogging'] = PsSettings::DEVMODE_OR_ADMIN();
-        $params['currentSubmitTimeout'] = ActivityWatcher::getWaitTime();
-        $params['tzOffset'] = PsTimeZone::inst()->getCurrentDateTimeZone()->getOffset(new DateTime());
-        $params['marker'] = AuthManager::getUserSessoinMarker();
-        $params['foldings'] = FoldedStorage::listEntitiesRel();
-        $params['isIpBanned'] = PsIp::isRemoteAddrBanned();
+    private function jsCommon(PageParams $params) {
+        $defs['url'] = PsUrl::current();
+        $defs['userId'] = AuthManager::getUserIdOrNull();
+        $defs['isAuthorized'] = AuthManager::isAuthorized();
+        $defs['isDOA'] = PsSettings::DEVMODE_OR_ADMIN();
+        $defs['isLogging'] = PsSettings::DEVMODE_OR_ADMIN();
+        $defs['currentSubmitTimeout'] = ActivityWatcher::getWaitTime();
+        $defs['tzOffset'] = PsTimeZone::inst()->getCurrentDateTimeZone()->getOffset(new DateTime());
+        $defs['marker'] = AuthManager::getUserSessoinMarker();
+        if ($params->isAddFoldingsInfo()) {
+            $defs['foldings'] = FoldedStorage::listEntitiesRel();
+        }
+        $defs['isIpBanned'] = PsIp::isRemoteAddrBanned();
 
-        return $params;
+        return $defs;
     }
 
-    public function buildJsDefs(PageParams $params = null) {
+    public function buildJsDefs(PageParams $params) {
         $JS_CLASS_CONSTS = PsUtil::getClassConsts('PsConstJs');
         $JS_CONSTS = $this->jsConsts();
-        $JS_COMMON = $this->jsCommon();
-        $JS_PAGE = $params ? $params->getJsParams() : array();
+        $JS_COMMON = $this->jsCommon($params);
 
-        $defs = json_encode(array_merge($JS_CONSTS, $JS_COMMON, $JS_PAGE));
+        $defs = json_encode(array_merge($JS_CONSTS, $JS_COMMON, /* $JS_PAGE */ $params->getJsParams()));
         $const = json_encode($JS_CLASS_CONSTS);
         $defs = "var defs=$defs; var CONST=$const;";
 

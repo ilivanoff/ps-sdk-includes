@@ -10,6 +10,18 @@ class PageBuilderContext extends FoldedContext {
     }
 
     /*
+     * Заголовок страницы
+     */
+
+    public function setTitle($title) {
+        $this->setParam(PageParams::PARAM_TITLE, $title);
+    }
+
+    private function getTitle() {
+        return $this->getParam(PageParams::PARAM_TITLE);
+    }
+
+    /*
      * Параметры javascript
      */
 
@@ -32,7 +44,7 @@ class PageBuilderContext extends FoldedContext {
     }
 
     /*
-     * Параметры javascript
+     * Параметры smarty для ресурсов
      */
 
     public function setSmartyParam4Resources($key, $val) {
@@ -50,15 +62,15 @@ class PageBuilderContext extends FoldedContext {
     }
 
     /*
-     * Заголовок страницы
+     * Параметры построения
      */
 
-    public function setTitle($title) {
-        $this->setParam(PageParams::PARAM_TITLE, $title);
+    public function setBuildOption($key, $val) {
+        $this->setMappedParam(PageParams::PARAM_BUILD_OPTIONS, $key, $val);
     }
 
-    private function getTitle() {
-        return $this->getParam(PageParams::PARAM_TITLE);
+    private function getBuildOptions() {
+        return $this->getParam(PageParams::PARAM_BUILD_OPTIONS, array());
     }
 
     /**
@@ -68,6 +80,7 @@ class PageBuilderContext extends FoldedContext {
         $PARAMS[PageParams::PARAM_JS] = $this->getJsParams();
         $PARAMS[PageParams::PARAM_TITLE] = $this->getTitle();
         $PARAMS[PageParams::PARAM_RESOURCES] = $this->getSmartyParams4Resources();
+        $PARAMS[PageParams::PARAM_BUILD_OPTIONS] = $this->getBuildOptions();
         $PARAMS[PageParams::PARAM_CONTENT] = $content;
         return $PARAMS;
     }
