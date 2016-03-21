@@ -172,6 +172,7 @@ define('COPY_DATE_TO', date('Y'));
 define('ENTITY_SCOPE_ALL', 'ALL');
 define('ENTITY_SCOPE_SDK', 'SDK');
 define('ENTITY_SCOPE_PROJ', 'PROJ');
+define('ENTITY_SCOPE_PROJ_EXT', 'PROJ_EXT');
 
 
 /*

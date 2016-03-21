@@ -15,6 +15,7 @@ final class PsConst {
     const EXT_ERR = 'err';
     const EXT_SQL = 'sql';
     const EXT_M3U = 'm3u';
+    const EXT_INI = 'ini';
     const EXT_JS = 'js';
     const EXT_TPL = 'tpl';
     const EXT_ZIP = 'zip';

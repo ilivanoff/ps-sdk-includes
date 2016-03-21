@@ -19,12 +19,6 @@ abstract class AbstractIni {
     private static $INI = array();
 
     /**
-     * Привязка названия класса к названию файла.
-     * ConfigIni => config.ini
-     */
-    private static $CLASS2FILE = array();
-
-    /**
      * Название класса
      */
     public static final function getClass() {
@@ -34,28 +28,31 @@ abstract class AbstractIni {
     /**
      * Название файла конфига: 'config.ini'
      */
-    public static function getConfigName() {
-        $class = self::getClass();
-        if (array_key_exists($class, self::$CLASS2FILE)) {
-            return self::$CLASS2FILE[$class];
+    private static function getConfigName($scope) {
+        $pieces[] = cut_string_end(strtolower(self::getClass()), 'ini');
+        switch ($scope) {
+            case ENTITY_SCOPE_PROJ_EXT:
+                $pieces[] = 'ext';
+                break;
         }
-        if ($class == __CLASS__) {
-            PsUtil::raise('Illegal to call {}::{}', __CLASS__, __FUNCTION__);
-        }
-        return self::$CLASS2FILE[$class] = cut_string_end(strtolower($class), 'ini') . '.ini';
+        $pieces[] = PsConst::EXT_INI;
+        return implode('.', $pieces);
     }
 
     /**
      * Получает ссылку на файл с конфигом .ini
      */
     private static function getIniDi($scope) {
+        $iniFileName = self::getConfigName($scope);
         switch ($scope) {
             case ENTITY_SCOPE_SDK:
-                return DirManager::inst(PS_DIR_INCLUDES)->getDirItem(DirManager::DIR_CONFIG, self::getConfigName());
+                return DirManager::inst(PS_DIR_INCLUDES)->getDirItem(DirManager::DIR_CONFIG, $iniFileName);
             case ENTITY_SCOPE_PROJ:
-                return DirManager::inst(PS_DIR_ADDON)->getDirItem(DirManager::DIR_CONFIG, self::getConfigName());
+                return DirManager::inst(PS_DIR_ADDON)->getDirItem(DirManager::DIR_CONFIG, $iniFileName);
+            case ENTITY_SCOPE_PROJ_EXT:
+                return DirManager::inst(PS_DIR_ADDON)->getDirItem(DirManager::DIR_CONFIG, $iniFileName);
         }
-        PsUtil::raise('Invalid scope [{}] for method {}::{}', $scope, __CLASS__, __FUNCTION__);
+        return PsUtil::raise('Invalid scope [{}] for method {}::{}', $scope, __CLASS__, __FUNCTION__);
     }
 
     /**
@@ -66,17 +63,17 @@ abstract class AbstractIni {
     }
 
     /**
-     * Проверка существования проектного ini
-     */
-    public static function existsProj() {
-        return self::existsIni(ENTITY_SCOPE_PROJ);
-    }
-
-    /**
      * Проверка существования ini файла в sdk
      */
     public static function existsSdk() {
         return self::existsIni(ENTITY_SCOPE_SDK);
+    }
+
+    /**
+     * Проверка существования проектного ini
+     */
+    public static function existsProj() {
+        return self::existsIni(ENTITY_SCOPE_PROJ);
     }
 
     /**
@@ -91,24 +88,35 @@ abstract class AbstractIni {
      */
     public static function saveIniContent($scope, $content) {
         self::getIniDi($scope)->putToFile($content);
-        unset(self::$INI[self::getConfigName()]);
+        unset(self::$INI[self::getConfigName($scope)]);
     }
 
     /**
      * Метод загружает все группы настроек
      */
     public static function getIni($scope = ENTITY_SCOPE_ALL) {
-        $config = self::getConfigName();
+        $config = self::getConfigName($scope);
 
         if (!array_key_exists($config, self::$INI)) {
 
-            $sdkDi = self::getIniDi(ENTITY_SCOPE_SDK);
+            /*
+             * Конфиги SDK есть всегда
+             */
+            self::$INI[$config][ENTITY_SCOPE_SDK] = self::getIniDi(ENTITY_SCOPE_SDK)->parseAsIni(true);
+
+            /*
+             * Если мы работаем в режиме SDK или не существует проектный файл настроек - выполняем быструю инициализацию.
+             * Отдельно к контексту ENTITY_SCOPE_PROJ_EXT обращаться нельзя
+             */
             $projDi = self::getIniDi(ENTITY_SCOPE_PROJ);
 
-            self::$INI[$config] = array();
-            self::$INI[$config][ENTITY_SCOPE_SDK] = $sdkDi->parseAsIni(true);
-            self::$INI[$config][ENTITY_SCOPE_PROJ] = to_array($projDi->parseAsIni(true, false));
-            self::$INI[$config][ENTITY_SCOPE_ALL] = PsUtil::mergeIniFiles(self::$INI[$config][ENTITY_SCOPE_SDK], self::$INI[$config][ENTITY_SCOPE_PROJ]);
+            if (self::isSdk() || !$projDi->isFile()) {
+                self::$INI[$config][ENTITY_SCOPE_PROJ] = array();
+                self::$INI[$config][ENTITY_SCOPE_ALL] = self::$INI[$config][ENTITY_SCOPE_SDK];
+            } else {
+                self::$INI[$config][ENTITY_SCOPE_PROJ] = to_array(PsUtil::mergeIniFiles($projDi->parseAsIni(true, false), self::getIniDi(ENTITY_SCOPE_PROJ_EXT)->parseAsIni(true, false)));
+                self::$INI[$config][ENTITY_SCOPE_ALL] = PsUtil::mergeIniFiles(self::$INI[$config][ENTITY_SCOPE_SDK], self::$INI[$config][ENTITY_SCOPE_PROJ]);
+            }
 
             //Экземпляр логгера должен быть создан именно здесь - после того, как был наполнен массив параметров
             //TODO - нельзя здесь использовать логгер. Можно вывести в FileLogWriter.
@@ -125,7 +133,7 @@ abstract class AbstractIni {
              */
         }
 
-        check_condition(array_key_exists($scope, self::$INI[$config]), "Unknown entity scope: $scope");
+        PsUtil::assert(array_key_exists($scope, self::$INI[$config]), "Unknown scope [{}]", $scope);
 
         return self::$INI[$config][$scope];
     }
@@ -152,7 +160,7 @@ abstract class AbstractIni {
             return self::getIni($scope)[$group];
         }
         if ($mandatory) {
-            PsUtil::raise('Required config group [{}] not found in {} [{}]', $group, static::getConfigName(), $scope);
+            PsUtil::raise('Required config group [{}] not found in {} [{}]', $group, static::getConfigName($scope), $scope);
         }
         return null; //--
     }
@@ -179,7 +187,7 @@ abstract class AbstractIni {
             return self::getGroup($group, true, $scope)[$prop];
         }
         if ($mandatory) {
-            PsUtil::raise('Required config property [{}/{}] not found in {} [{}]', $group, $prop, static::getConfigName(), $scope);
+            PsUtil::raise('Required config property [{}/{}] not found in {} [{}]', $group, $prop, static::getConfigName($scope), $scope);
         }
         return null; //--
     }
@@ -196,6 +204,29 @@ abstract class AbstractIni {
      */
     public static function getPropCheckType($group, $prop, array $allowedTypes = null, $scope = ENTITY_SCOPE_ALL) {
         return PsCheck::phpVarType(self::getPropOrNull($group, $prop, $scope), $allowedTypes);
+    }
+
+    /**
+     * Метод возвращает признак - работаем ли мы в контексте проекта.
+     * Для этого должен существовать конфиг проекнтных настроек: 
+     * /ps-addon/config/config.ini
+     * 
+     * Все остальные конфиги не будут учитывать проектные, даже если они будут 
+     * существовать.
+     * 
+     * @return bool
+     */
+    public static final function isProject() {
+        return DirManager::inst(PS_DIR_ADDON)->getDirItem(DirManager::DIR_CONFIG, DirManager::DIR_CONFIG, PsConst::EXT_INI)->isFile();
+    }
+
+    /**
+     * Метод возвращает признак - работаем ли мы в контексте только SDK.
+     * 
+     * @return bool
+     */
+    public static final function isSdk() {
+        return !self::isProject();
     }
 
 }

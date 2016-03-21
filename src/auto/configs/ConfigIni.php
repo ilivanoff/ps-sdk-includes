@@ -258,26 +258,20 @@ final class ConfigIni extends AbstractIni {
         return to_array(self::getPropCheckType(self::GROUP_ADMIN_ACCESS_METHODS, PsUtil::assertClassHasConstVithValue(__CLASS__, 'GROUP_ADMIN_ACCESS_METHODS_', $type), array(PsConst::PHP_TYPE_NULL, PsConst::PHP_TYPE_ARRAY)));
     }
 
-    /*
-     * COMMON
-     */
-
-    public static function isSdk() {
-        return self::projectName() == 'sdk';
-    }
-
-    public static function isProject() {
-        return !self::isSdk();
-    }
-
     /**
-     * Возвращает доступные скоупы. Всегда доступен SDK и,
-     * если мы работаем из проекта - доступен PROJ.
+     * Возвращает доступные скоупы. 
+     * Всегда доступен SDK и, если мы работаем из проекта - доступен PROJ и
+     * его расширение PROJ_EXT, который обычно помечен как excluded в проекте,
+     * чтобы при выполнении git.pull он не обновлялся.
+     * 
+     * Данный метод используется для отображения панели редактирования конфигов
+     * для каждого скоупа в админке.
      */
     public static function getAllowedScopes() {
         $scopes = array(ENTITY_SCOPE_SDK);
         if (self::isProject()) {
             $scopes[] = ENTITY_SCOPE_PROJ;
+            $scopes[] = ENTITY_SCOPE_PROJ_EXT;
         }
         return $scopes;
     }

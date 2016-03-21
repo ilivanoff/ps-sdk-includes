@@ -403,7 +403,7 @@ final class PsUtil {
                 continue; //---
             }
 
-            check_condition(is_array($ini), 'Arrays expected in ' . __FUNCTION__);
+            PsCheck::arr($ini);
 
             if ($result === null) {
                 $result = $ini;
