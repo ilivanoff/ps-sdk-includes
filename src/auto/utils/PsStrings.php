@@ -35,7 +35,7 @@ final class PsStrings {
             //Выходим, если параметры не переданы и нам не нужно проверять совпадение кол-ва параметров с кол-вом разделителей
             return $text;
         }
-        //Разделим текст на кол-во элеметнов, плюс один
+        //Разделим текст на кол-во элеметнов, плюс два
         $tokens = explode($delimiter, $text, $paramsCount + 2);
         $tokensCount = count($tokens);
         if ($checkCount) {
